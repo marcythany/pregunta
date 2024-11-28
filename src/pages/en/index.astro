@@ -1,17 +1,71 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import CategoryCard from '../../components/categories/CategoryCard.astro';
+import PlayerCard from '../../components/ranking/PlayerCard.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const categories = [
+  { title: 'Beach Getaway', imageUrl: 'https://picsum.photos/id/1000/300/200' },
+  { title: 'Mountain Adventure', imageUrl: 'https://picsum.photos/id/1018/300/200' },
+  { title: 'City Lights', imageUrl: 'https://picsum.photos/id/1033/300/200' },
+  { title: 'Forest Escape', imageUrl: 'https://picsum.photos/id/1043/300/200' },
+  { title: 'Music Festival', imageUrl: 'https://picsum.photos/id/1082/300/200' },
+  { title: 'Historical Tour', imageUrl: 'https://picsum.photos/id/1061/300/200' },
+  { title: 'Local Market', imageUrl: 'https://picsum.photos/id/292/300/200' },
+  { title: 'Lake Retreat', imageUrl: 'https://picsum.photos/id/1015/300/200' },
+];
+
+const topPlayers = [
+  { name: 'Alex J.', username: '@starplayer', score: 9500, avatarUrl: 'https://picsum.photos/id/64/150/150', favoriteColor: '#9B6B9E' },  // Lilás pastel
+  { name: 'Jamie L.', username: '@gamerpro', score: 9400, avatarUrl: 'https://picsum.photos/id/65/150/150', favoriteColor: '#7BA5A9' },  // Azul-esverdeado pastel
+  { name: 'Sam T.', username: '@highscore', score: 9300, avatarUrl: 'https://picsum.photos/id/66/150/150', favoriteColor: '#A17C6B' },     // Marrom pastel
+  { name: 'Chris M.', username: '@champion', score: 9200, avatarUrl: 'https://picsum.photos/id/67/150/150', favoriteColor: '#819B7D' },   // Verde pastel
+];
 
 const aboutURL = getRelativeLocaleUrl('en', 'about');
 const playURL = getRelativeLocaleUrl('en', 'play');
 ---
 
 <Layout title="Pregunta - Quiz Game" description="A modern and interactive quiz game">
+  <!-- Hero Section -->
+  <section class="relative bg-gray-200 dark:bg-gray-800 h-[500px] flex items-center justify-center">
+    <div class="text-center">
+      <h1 class="text-5xl font-bold mb-8 dark:text-white">Dive into Trivia Fun</h1>
+      <a href={playURL} class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+        Play Now
+      </a>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="py-16 px-4">
+    <div class="container mx-auto">
+      <h2 class="text-2xl font-bold mb-8 dark:text-white">Recent Theme Categories</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {categories.map(category => (
+          <CategoryCard {...category} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Players Section -->
+  <section class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto">
+      <h2 class="text-2xl font-bold mb-8 dark:text-white">Top Ranked Players</h2>
+      <div class="grid gap-4 max-w-2xl mx-auto">
+        {topPlayers.map(player => (
+          <PlayerCard {...player} />
+        ))}
+      </div>
+    </div>
+  </section>
+
   <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-center mb-8">Welcome to Pregunta!</h1>
+    <h1 class="text-4xl font-bold text-center mb-8 dark:text-white">Welcome to Pregunta!</h1>
     <div class="flex flex-col items-center gap-4">
       <a href={playURL} class="btn btn-primary">Play Now</a>
-      <a href={aboutURL} class="btn btn-secondary">About</a>
+      <a href={aboutURL} class="btn btn-secondary">About the Game</a>
     </div>
   </main>
 </Layout>

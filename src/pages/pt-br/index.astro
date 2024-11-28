@@ -1,14 +1,68 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import CategoryCard from '../../components/categories/CategoryCard.astro';
+import PlayerCard from '../../components/ranking/PlayerCard.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
+
+const categories = [
+  { title: 'Praia', imageUrl: 'https://picsum.photos/id/1000/300/200' },
+  { title: 'Aventura na Montanha', imageUrl: 'https://picsum.photos/id/1018/300/200' },
+  { title: 'Luzes da Cidade', imageUrl: 'https://picsum.photos/id/1033/300/200' },
+  { title: 'Escape na Floresta', imageUrl: 'https://picsum.photos/id/1043/300/200' },
+  { title: 'Festival de Música', imageUrl: 'https://picsum.photos/id/1082/300/200' },
+  { title: 'Tour Histórico', imageUrl: 'https://picsum.photos/id/1061/300/200' },
+  { title: 'Mercado Local', imageUrl: 'https://picsum.photos/id/292/300/200' },
+  { title: 'Retiro no Lago', imageUrl: 'https://picsum.photos/id/1015/300/200' },
+];
+
+const topPlayers = [
+  { name: 'Alex J.', username: '@starplayer', score: 9500, avatarUrl: 'https://picsum.photos/id/64/150/150', favoriteColor: '#9B6B9E' },  // Lilás pastel
+  { name: 'Jamie L.', username: '@gamerpro', score: 9400, avatarUrl: 'https://picsum.photos/id/65/150/150', favoriteColor: '#7BA5A9' },  // Azul-esverdeado pastel
+  { name: 'Sam T.', username: '@highscore', score: 9300, avatarUrl: 'https://picsum.photos/id/66/150/150', favoriteColor: '#A17C6B' },     // Marrom pastel
+  { name: 'Chris M.', username: '@champion', score: 9200, avatarUrl: 'https://picsum.photos/id/67/150/150', favoriteColor: '#819B7D' },   // Verde pastel
+];
 
 const aboutURL = getRelativeLocaleUrl('pt-br', 'about');
 const playURL = getRelativeLocaleUrl('pt-br', 'play');
 ---
 
 <Layout title="Pregunta - Jogo de Perguntas e Respostas" description="Um jogo de perguntas e respostas moderno e interativo">
+  <!-- Hero Section -->
+  <section class="relative bg-gray-200 dark:bg-gray-800 h-[500px] flex items-center justify-center">
+    <div class="text-center">
+      <h1 class="text-5xl font-bold mb-8 dark:text-white">Mergulhe na Diversão do Trivia</h1>
+      <a href={playURL} class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+        Jogar Agora
+      </a>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="py-16 px-4">
+    <div class="container mx-auto">
+      <h2 class="text-2xl font-bold mb-8 dark:text-white">Categorias Temáticas Recentes</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {categories.map(category => (
+          <CategoryCard {...category} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Players Section -->
+  <section class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto">
+      <h2 class="text-2xl font-bold mb-8 dark:text-white">Jogadores Mais Bem Classificados</h2>
+      <div class="grid gap-4 max-w-2xl mx-auto">
+        {topPlayers.map(player => (
+          <PlayerCard {...player} />
+        ))}
+      </div>
+    </div>
+  </section>
+
   <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-center mb-8">Bem-vindo ao Pregunta!</h1>
+    <h1 class="text-4xl font-bold text-center mb-8 dark:text-white">Bem-vindo ao Pregunta!</h1>
     <div class="flex flex-col items-center gap-4">
       <a href={playURL} class="btn btn-primary">Jogar Agora</a>
       <a href={aboutURL} class="btn btn-secondary">Sobre o Jogo</a>

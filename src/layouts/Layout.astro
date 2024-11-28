@@ -9,12 +9,12 @@ interface Props {
   description?: string;
 }
 
-const { title, description } = Astro.props;
+const { title, description = "Pregunta - O jogo de perguntas e respostas" } = Astro.props;
 
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} class="h-full">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
@@ -23,36 +23,31 @@ const { title, description } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
-  <body class="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">
-    <div class="flex flex-col min-h-screen">
+  <body class="h-full bg-light dark:bg-dark text-light dark:text-dark antialiased">
+    <div class="min-h-full flex flex-col">
       <Header />
-      <main class="flex-grow">
-        <slot />
+      <main class="flex-1">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <slot />
+        </div>
       </main>
       <Footer />
     </div>
     <script>
-      // Gerenciamento do tema
       const theme = (() => {
-        if (typeof localStorage !== 'undefined') {
-          const storedTheme = localStorage.getItem('theme');
-          if (storedTheme) {
-            return storedTheme;
-          }
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
         }
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          return 'dark';
-        }
-        return 'light';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       })();
-        
+    
       if (theme === 'light') {
         document.documentElement.classList.remove('dark');
       } else {
         document.documentElement.classList.add('dark');
       }
-
-      window.localStorage.setItem('theme', theme);
+      
+      window.localStorage.setItem('theme', theme || 'light');
     </script>
   </body>
 </html>

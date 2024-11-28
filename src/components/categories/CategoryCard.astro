@@ -1,0 +1,40 @@
+---
+interface Props {
+  title: string;
+  imageUrl: string;
+}
+
+const { title, imageUrl } = Astro.props;
+
+// Cores pastéis para categorias
+const pastelColors = {
+  light: [
+    '#F0E6EF', // Rosa pastel claro
+    '#E6F0EF', // Verde-água pastel claro
+    '#EFF0E6', // Amarelo pastel claro
+    '#E6EFF0', // Azul pastel claro
+  ],
+  dark: [
+    '#4A3E49', // Rosa pastel escuro
+    '#3E4A49', // Verde-água pastel escuro
+    '#494A3E', // Amarelo pastel escuro
+    '#3E494A', // Azul pastel escuro
+  ]
+};
+
+const randomIndex = Math.floor(Math.random() * pastelColors.light.length);
+const randomPastelLight = pastelColors.light[randomIndex];
+const randomPastelDark = pastelColors.dark[randomIndex];
+---
+
+<div class="rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow" 
+  style={{
+    '--light-color': randomPastelLight,
+    '--dark-color': randomPastelDark,
+  }}
+  class="bg-[--light-color] dark:bg-[--dark-color]">
+  <div class="p-4">
+    <img src={imageUrl} alt={title} class="w-16 h-16 mx-auto mb-4" />
+    <h3 class="text-center font-medium text-gray-800 dark:text-gray-100">{title}</h3>
+  </div>
+</div>

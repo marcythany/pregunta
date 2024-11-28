@@ -13,7 +13,7 @@ const Avatar = ({
   };
 
   return (
-    <div className={`relative rounded-full overflow-hidden ${sizes[size]} ${className}`}>
+    <div className={`relative rounded-full overflow-hidden ring-2 ring-gray-200 dark:ring-gray-700 ${sizes[size]} ${className}`}>
       <img
         src={src || '/default-avatar.png'}
         alt={alt || 'User avatar'}

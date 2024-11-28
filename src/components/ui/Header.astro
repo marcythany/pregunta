@@ -24,31 +24,36 @@ const playUrl = getRelativeLocaleUrl(lang, 'play');
 const profileUrl = getRelativeLocaleUrl(lang, 'profile');
 ---
 
-<header class="sticky top-0 z-50 bg-light-surface/80 dark:bg-dark-surface/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
-  <nav class="container mx-auto px-4 py-3">
-    <div class="flex items-center justify-between">
-      <a href={homeUrl} class="text-2xl font-bold text-light-primary dark:text-dark-primary">
-        Pregunta
-      </a>
+<header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      <div class="flex items-center">
+        <a href={homeUrl} class="text-2xl font-bold text-primary-600 dark:text-primary-400">
+          Pregunta
+        </a>
+      </div>
 
-      <div class="flex items-center gap-4">
-        <a href={homeUrl} class="hover:text-light-primary dark:hover:text-dark-primary">
+      <div class="hidden md:flex md:items-center md:space-x-6">
+        <a href={homeUrl} class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400">
           {t('nav.home')}
         </a>
-        <a href={playUrl} class="hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={playUrl} class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400">
           {t('nav.play')}
         </a>
-        <a href={profileUrl} class="hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={profileUrl} class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400">
           {t('nav.profile')}
         </a>
-        
-        <div class="flex items-center gap-2">
-          <select id="language-select" class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1">
-            <option value="pt-br" selected={lang === 'pt-br'}>PT-BR</option>
-            <option value="en" selected={lang === 'en'}>EN</option>
-          </select>
-          <ThemeToggle />
-        </div>
+      </div>
+
+      <div class="flex items-center space-x-4">
+        <select 
+          id="language-select" 
+          class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-200"
+        >
+          <option value="pt-br" selected={lang === 'pt-br'}>PT-BR</option>
+          <option value="en" selected={lang === 'en'}>EN</option>
+        </select>
+        <ThemeToggle />
       </div>
     </div>
   </nav>
@@ -58,7 +63,7 @@ const profileUrl = getRelativeLocaleUrl(lang, 'profile');
   const languageSelect = document.getElementById('language-select');
   
   languageSelect?.addEventListener('change', (e) => {
-    const target = e.target;
+    const target = e.target as HTMLSelectElement;
     const newLang = target.value;
     const currentPath = window.location.pathname.split('/').slice(2).join('/');
     window.location.href = `/${newLang}/${currentPath}`;

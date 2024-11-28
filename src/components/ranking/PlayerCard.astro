@@ -1,0 +1,68 @@
+---
+interface Props {
+  name: string;
+  username: string;
+  score: number;
+  avatarUrl: string;
+  favoriteColor?: string;
+}
+
+const { name, username, score, avatarUrl, favoriteColor = '#9B6B9E' } = Astro.props;
+
+// Função para clarear uma cor (criar tom pastel)
+const lightenColor = (color: string, percent: number) => {
+  const num = parseInt(color.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = (num >> 8 & 0x00FF) + amt;
+  const B = (num & 0x0000FF) + amt;
+  return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+};
+
+// Função para escurecer uma cor (para modo escuro)
+const darkenColor = (color: string, percent: number) => {
+  const num = parseInt(color.replace('#', ''), 16);
+  const amt = Math.round(2.55 * -percent);
+  const R = (num >> 16) + amt;
+  const G = (num >> 8 & 0x00FF) + amt;
+  const B = (num & 0x0000FF) + amt;
+  return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+};
+
+const bgColor = lightenColor(favoriteColor, 30); // Versão mais clara para modo claro
+const darkBgColor = darkenColor(favoriteColor, 30); // Versão mais escura para modo escuro
+---
+
+<div class="flex items-center space-x-4 p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+  style={{
+    '--light-bg': `${bgColor}30`,
+    '--dark-bg': `${darkBgColor}30`,
+  }}
+  class="bg-[--light-bg] dark:bg-[--dark-bg]">
+  <div class="flex-shrink-0">
+    <div class="h-12 w-12 rounded-full overflow-hidden ring-2" 
+      style={{
+        '--ring-color': favoriteColor,
+        '--dark-ring-color': darkenColor(favoriteColor, 20),
+      }}
+      class="ring-[--ring-color] dark:ring-[--dark-ring-color]">
+      <img 
+        src={avatarUrl || `/images/default-avatar.png`} 
+        alt={`${name}'s avatar`}
+        class="w-full h-full object-cover"
+      />
+    </div>
+  </div>
+  <div class="flex-grow">
+    <h3 class="font-semibold text-gray-900 dark:text-gray-100">{name}</h3>
+    <p class="text-gray-600 dark:text-gray-400">{username}</p>
+  </div>
+  <div class="flex-shrink-0">
+    <p class="text-sm text-gray-600 dark:text-gray-400">Pontuação</p>
+    <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">{score}</p>
+  </div>
+</div>
