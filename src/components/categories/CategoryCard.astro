@@ -27,14 +27,30 @@ const randomPastelLight = pastelColors.light[randomIndex];
 const randomPastelDark = pastelColors.dark[randomIndex];
 ---
 
-<div class="rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow" 
-  style={{
-    '--light-color': randomPastelLight,
-    '--dark-color': randomPastelDark,
-  }}
-  class="bg-[--light-color] dark:bg-[--dark-color]">
-  <div class="p-4">
-    <img src={imageUrl} alt={title} class="w-16 h-16 mx-auto mb-4" />
-    <h3 class="text-center font-medium text-gray-800 dark:text-gray-100">{title}</h3>
+<div class="group relative overflow-hidden rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1">
+  <!-- Overlay gradiente -->
+  <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  
+  <!-- Imagem -->
+  <div class="aspect-[4/3] overflow-hidden">
+    <img 
+      src={imageUrl} 
+      alt={title}
+      class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+      loading="lazy"
+    />
+  </div>
+  
+  <!-- Título -->
+  <div class="absolute inset-x-0 bottom-0 p-6">
+    <h3 class="text-xl font-display font-semibold text-white opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+      {title}
+    </h3>
   </div>
 </div>
+
+<style>
+  .group:hover {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  }
+</style>

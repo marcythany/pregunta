@@ -16,31 +16,50 @@ const categories = [
 ];
 
 const topPlayers = [
-  { name: 'Alex J.', username: '@starplayer', score: 9500, avatarUrl: 'https://picsum.photos/id/64/150/150', favoriteColor: '#9B6B9E' },  // Lilás pastel
-  { name: 'Jamie L.', username: '@gamerpro', score: 9400, avatarUrl: 'https://picsum.photos/id/65/150/150', favoriteColor: '#7BA5A9' },  // Azul-esverdeado pastel
-  { name: 'Sam T.', username: '@highscore', score: 9300, avatarUrl: 'https://picsum.photos/id/66/150/150', favoriteColor: '#A17C6B' },     // Marrom pastel
-  { name: 'Chris M.', username: '@champion', score: 9200, avatarUrl: 'https://picsum.photos/id/67/150/150', favoriteColor: '#819B7D' },   // Verde pastel
+  { name: 'Alex J.', username: '@starplayer', score: 9500, avatarUrl: 'https://picsum.photos/id/64/150/150', favoriteColor: '#FFD93D' },
+  { name: 'Jamie L.', username: '@gamerpro', score: 9400, avatarUrl: 'https://picsum.photos/id/65/150/150', favoriteColor: '#FF8400' },
+  { name: 'Sam T.', username: '@highscore', score: 9300, avatarUrl: 'https://picsum.photos/id/66/150/150', favoriteColor: '#4CAF50' },
+  { name: 'Chris M.', username: '@champion', score: 9200, avatarUrl: 'https://picsum.photos/id/67/150/150', favoriteColor: '#FF69B4' },
 ];
 
-const aboutURL = getRelativeLocaleUrl('pt-br', 'about');
 const playURL = getRelativeLocaleUrl('pt-br', 'play');
+const aboutURL = getRelativeLocaleUrl('pt-br', 'about');
 ---
 
 <Layout title="Pregunta - Jogo de Perguntas e Respostas" description="Um jogo de perguntas e respostas moderno e interativo">
   <!-- Hero Section -->
-  <section class="relative bg-gray-200 dark:bg-gray-800 h-[500px] flex items-center justify-center">
-    <div class="text-center">
-      <h1 class="text-5xl font-bold mb-8 dark:text-white">Mergulhe na Diversão do Trivia</h1>
-      <a href={playURL} class="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
-        Jogar Agora
-      </a>
+  <section class="relative py-20 overflow-hidden">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="font-display text-6xl font-bold mb-6 bg-gradient-to-r from-accent-orange via-accent-purple to-accent-pink bg-clip-text text-transparent animate-float">
+          Mergulhe na Diversão do Trivia
+        </h1>
+        <p class="text-xl mb-8 text-gray-600 dark:text-gray-300">
+          Desafie seus amigos, aprenda coisas novas e divirta-se com nosso jogo de perguntas e respostas!
+        </p>
+        <div class="flex gap-4 justify-center">
+          <a 
+            href={playURL}
+            class="px-8 py-4 bg-accent-orange hover:bg-accent-orange/90 text-white rounded-full font-semibold shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            Jogar Agora
+          </a>
+          <a 
+            href={aboutURL}
+            class="px-8 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-white rounded-full font-semibold shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200"
+          >
+            Saiba Mais
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- Categories Section -->
   <section class="py-16 px-4">
     <div class="container mx-auto">
-      <h2 class="text-2xl font-bold mb-8 dark:text-white">Categorias Temáticas Recentes</h2>
+      <h2 class="text-4xl font-display font-bold mb-2 text-center">Categorias Temáticas</h2>
+      <p class="text-gray-600 dark:text-gray-300 text-center mb-12">Explore nossos diversos temas e encontre seu favorito</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {categories.map(category => (
           <CategoryCard {...category} />
@@ -50,9 +69,10 @@ const playURL = getRelativeLocaleUrl('pt-br', 'play');
   </section>
 
   <!-- Top Players Section -->
-  <section class="py-16 px-4 bg-gray-50 dark:bg-gray-900">
+  <section class="py-16 px-4">
     <div class="container mx-auto">
-      <h2 class="text-2xl font-bold mb-8 dark:text-white">Jogadores Mais Bem Classificados</h2>
+      <h2 class="text-4xl font-display font-bold mb-2 text-center">Hall da Fama</h2>
+      <p class="text-gray-600 dark:text-gray-300 text-center mb-12">Conheça nossos jogadores mais dedicados</p>
       <div class="grid gap-4 max-w-2xl mx-auto">
         {topPlayers.map(player => (
           <PlayerCard {...player} />
@@ -60,12 +80,4 @@ const playURL = getRelativeLocaleUrl('pt-br', 'play');
       </div>
     </div>
   </section>
-
-  <main class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold text-center mb-8 dark:text-white">Bem-vindo ao Pregunta!</h1>
-    <div class="flex flex-col items-center gap-4">
-      <a href={playURL} class="btn btn-primary">Jogar Agora</a>
-      <a href={aboutURL} class="btn btn-secondary">Sobre o Jogo</a>
-    </div>
-  </main>
 </Layout>

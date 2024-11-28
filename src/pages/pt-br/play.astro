@@ -1,0 +1,108 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CategoryCard from '../../components/categories/CategoryCard.astro';
+
+const categories = [
+  { title: 'História', imageUrl: 'https://picsum.photos/id/1000/300/200' },
+  { title: 'Geografia', imageUrl: 'https://picsum.photos/id/1015/300/200' },
+  { title: 'Ciências', imageUrl: 'https://picsum.photos/id/1043/300/200' },
+  { title: 'Artes', imageUrl: 'https://picsum.photos/id/1082/300/200' },
+  { title: 'Esportes', imageUrl: 'https://picsum.photos/id/1033/300/200' },
+  { title: 'Entretenimento', imageUrl: 'https://picsum.photos/id/1061/300/200' },
+  { title: 'Tecnologia', imageUrl: 'https://picsum.photos/id/1018/300/200' },
+  { title: 'Literatura', imageUrl: 'https://picsum.photos/id/292/300/200' },
+];
+
+const recentGames = [
+  {
+    id: 1,
+    title: 'Quiz de História Mundial',
+    players: 4,
+    difficulty: 'Médio',
+    status: 'Em andamento',
+  },
+  {
+    id: 2,
+    title: 'Desafio de Geografia',
+    players: 3,
+    difficulty: 'Fácil',
+    status: 'Aguardando jogadores',
+  },
+  {
+    id: 3,
+    title: 'Trivia de Ciências',
+    players: 6,
+    difficulty: 'Difícil',
+    status: 'Em andamento',
+  },
+];
+---
+
+<Layout title="Pregunta - Jogar" description="Escolha uma categoria e comece a jogar">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Quick Play Section -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-r from-accent-orange via-accent-purple to-accent-pink rounded-2xl p-8 text-white">
+        <div class="max-w-3xl mx-auto text-center">
+          <h2 class="text-4xl font-display font-bold mb-4">Partida Rápida</h2>
+          <p class="text-lg mb-8 opacity-90">
+            Entre em uma partida aleatória e comece a jogar imediatamente!
+          </p>
+          <button class="bg-white text-accent-orange hover:bg-gray-100 px-8 py-4 rounded-full font-semibold shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200">
+            Jogar Agora
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-display font-bold mb-2 text-gray-900 dark:text-white">Categorias</h2>
+      <p class="text-gray-600 dark:text-gray-300 mb-8">Escolha uma categoria para jogar</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {categories.map(category => (
+          <CategoryCard {...category} />
+        ))}
+      </div>
+    </section>
+
+    <!-- Active Games Section -->
+    <section>
+      <h2 class="text-3xl font-display font-bold mb-2 text-gray-900 dark:text-white">Jogos Ativos</h2>
+      <p class="text-gray-600 dark:text-gray-300 mb-8">Entre em um jogo em andamento</p>
+      <div class="grid gap-4">
+        {recentGames.map(game => (
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-soft p-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{game.title}</h3>
+                <div class="flex items-center mt-2 space-x-4">
+                  <span class="text-sm text-gray-500 dark:text-gray-400">
+                    {game.players} jogadores
+                  </span>
+                  <span class="text-sm text-gray-500 dark:text-gray-400">
+                    {game.difficulty}
+                  </span>
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
+                    {game.status}
+                  </span>
+                </div>
+              </div>
+              <button class="px-6 py-2 bg-accent-orange hover:bg-accent-orange/90 text-white rounded-full font-medium shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200">
+                Entrar
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<script>
+  const quickPlayButton = document.querySelector('button');
+  quickPlayButton?.addEventListener('click', () => {
+    // TODO: Implement quick play logic
+    console.log('Quick play clicked');
+  });
+</script>

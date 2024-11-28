@@ -9,11 +9,17 @@ const translations = {
     'nav.home': 'Início',
     'nav.play': 'Jogar',
     'nav.profile': 'Perfil',
+    'nav.login': 'Entrar',
+    'nav.signup': 'Cadastrar',
+    'nav.logout': 'Sair'
   },
   'en': {
     'nav.home': 'Home',
     'nav.play': 'Play',
     'nav.profile': 'Profile',
+    'nav.login': 'Login',
+    'nav.signup': 'Sign Up',
+    'nav.logout': 'Logout'
   }
 };
 
@@ -22,6 +28,15 @@ const t = (key) => translations[lang]?.[key] || key;
 const homeUrl = getRelativeLocaleUrl(lang, '');
 const playUrl = getRelativeLocaleUrl(lang, 'play');
 const profileUrl = getRelativeLocaleUrl(lang, 'profile');
+const loginUrl = getRelativeLocaleUrl(lang, 'login');
+const signupUrl = getRelativeLocaleUrl(lang, 'signup');
+
+// TODO: Replace with actual auth check
+const isLoggedIn = false;
+const userProfile = {
+  name: 'John Doe',
+  avatar: 'https://picsum.photos/id/64/150/150'
+};
 ---
 
 <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
@@ -40,20 +55,55 @@ const profileUrl = getRelativeLocaleUrl(lang, 'profile');
         <a href={playUrl} class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400">
           {t('nav.play')}
         </a>
-        <a href={profileUrl} class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400">
-          {t('nav.profile')}
-        </a>
+        {isLoggedIn && (
+          <a href={profileUrl} class="text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400">
+            {t('nav.profile')}
+          </a>
+        )}
       </div>
 
       <div class="flex items-center space-x-4">
         <select 
           id="language-select" 
-          class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-200"
+          class="bg-transparent dark:bg-slate-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm text-gray-700 dark:text-gray-200"
         >
           <option value="pt-br" selected={lang === 'pt-br'}>PT-BR</option>
           <option value="en" selected={lang === 'en'}>EN</option>
         </select>
         <ThemeToggle />
+        
+        {isLoggedIn ? (
+          <div class="flex items-center space-x-4">
+            <a href={profileUrl} class="flex items-center">
+              <img 
+                src={userProfile.avatar} 
+                alt={userProfile.name}
+                class="w-8 h-8 rounded-full border-2 border-accent-orange"
+              />
+            </a>
+            <button
+              id="logout-button"
+              class="text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400"
+            >
+              {t('nav.logout')}
+            </button>
+          </div>
+        ) : (
+          <div class="flex items-center space-x-4">
+            <a 
+              href={loginUrl}
+              class="text-sm font-medium text-gray-700 hover:text-primary-600 dark:text-gray-200 dark:hover:text-primary-400"
+            >
+              {t('nav.login')}
+            </a>
+            <a 
+              href={signupUrl}
+              class="px-4 py-2 text-sm font-medium text-white bg-accent-orange hover:bg-accent-orange/90 rounded-full"
+            >
+              {t('nav.signup')}
+            </a>
+          </div>
+        )}
       </div>
     </div>
   </nav>
@@ -61,11 +111,17 @@ const profileUrl = getRelativeLocaleUrl(lang, 'profile');
 
 <script>
   const languageSelect = document.getElementById('language-select');
+  const logoutButton = document.getElementById('logout-button');
   
   languageSelect?.addEventListener('change', (e) => {
     const target = e.target as HTMLSelectElement;
     const newLang = target.value;
     const currentPath = window.location.pathname.split('/').slice(2).join('/');
     window.location.href = `/${newLang}/${currentPath}`;
+  });
+
+  logoutButton?.addEventListener('click', () => {
+    // TODO: Implement logout logic
+    window.location.href = '/';
   });
 </script>
