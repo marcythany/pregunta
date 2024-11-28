@@ -1,27 +1,46 @@
 ---
-import { getLanguageFromURL, useTranslations } from '../../i18n/utils';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 
-const lang = getLanguageFromURL(Astro.url);
-const t = useTranslations(lang);
+const lang = Astro.currentLocale || 'pt-br';
+
+const translations = {
+  'pt-br': {
+    'footer.rights': 'Todos os direitos reservados.',
+    'footer.about': 'Sobre',
+    'footer.privacy': 'Privacidade',
+    'footer.terms': 'Termos de Uso',
+  },
+  'en': {
+    'footer.rights': 'All rights reserved.',
+    'footer.about': 'About',
+    'footer.privacy': 'Privacy',
+    'footer.terms': 'Terms of Use',
+  }
+};
+
+const t = (key) => translations[lang]?.[key] || key;
 
 const currentYear = new Date().getFullYear();
+const aboutUrl = getRelativeLocaleUrl(lang, 'about');
+const privacyUrl = getRelativeLocaleUrl(lang, 'privacy');
+const termsUrl = getRelativeLocaleUrl(lang, 'terms');
 ---
 
-<footer class="w-full py-6 mt-12 bg-light-surface dark:bg-dark-surface border-t border-gray-200 dark:border-gray-700">
+<footer class="w-full py-6 bg-light-surface dark:bg-dark-surface border-t border-gray-200 dark:border-gray-700">
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="text-sm text-gray-600 dark:text-gray-400">
-        © {currentYear} Pregunta. {t('footer.rights')}
+        {currentYear} Pregunta. {t('footer.rights')}
       </div>
       
       <div class="flex gap-6">
-        <a href={`/${lang}/about`} class="text-sm hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={aboutUrl} class="text-sm hover:text-light-primary dark:hover:text-dark-primary">
           {t('footer.about')}
         </a>
-        <a href={`/${lang}/privacy`} class="text-sm hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={privacyUrl} class="text-sm hover:text-light-primary dark:hover:text-dark-primary">
           {t('footer.privacy')}
         </a>
-        <a href={`/${lang}/terms`} class="text-sm hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={termsUrl} class="text-sm hover:text-light-primary dark:hover:text-dark-primary">
           {t('footer.terms')}
         </a>
       </div>

@@ -1,31 +1,49 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import ThemeToggle from './ThemeToggle.astro';
-import { getLanguageFromURL, useTranslations } from '../../i18n/utils';
 
-const lang = getLanguageFromURL(Astro.url);
-const t = useTranslations(lang);
+const lang = Astro.currentLocale || 'pt-br';
+
+const translations = {
+  'pt-br': {
+    'nav.home': 'Início',
+    'nav.play': 'Jogar',
+    'nav.profile': 'Perfil',
+  },
+  'en': {
+    'nav.home': 'Home',
+    'nav.play': 'Play',
+    'nav.profile': 'Profile',
+  }
+};
+
+const t = (key) => translations[lang]?.[key] || key;
+
+const homeUrl = getRelativeLocaleUrl(lang, '');
+const playUrl = getRelativeLocaleUrl(lang, 'play');
+const profileUrl = getRelativeLocaleUrl(lang, 'profile');
 ---
 
-<header class="fixed w-full top-0 z-50 bg-light-surface/80 dark:bg-dark-surface/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+<header class="sticky top-0 z-50 bg-light-surface/80 dark:bg-dark-surface/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
   <nav class="container mx-auto px-4 py-3">
     <div class="flex items-center justify-between">
-      <a href="/" class="text-2xl font-bold text-light-primary dark:text-dark-primary">
+      <a href={homeUrl} class="text-2xl font-bold text-light-primary dark:text-dark-primary">
         Pregunta
       </a>
 
       <div class="flex items-center gap-4">
-        <a href={`/${lang}`} class="hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={homeUrl} class="hover:text-light-primary dark:hover:text-dark-primary">
           {t('nav.home')}
         </a>
-        <a href={`/${lang}/play`} class="hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={playUrl} class="hover:text-light-primary dark:hover:text-dark-primary">
           {t('nav.play')}
         </a>
-        <a href={`/${lang}/profile`} class="hover:text-light-primary dark:hover:text-dark-primary">
+        <a href={profileUrl} class="hover:text-light-primary dark:hover:text-dark-primary">
           {t('nav.profile')}
         </a>
         
         <div class="flex items-center gap-2">
-          <select id="language-select" class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-md">
+          <select id="language-select" class="bg-transparent border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1">
             <option value="pt-br" selected={lang === 'pt-br'}>PT-BR</option>
             <option value="en" selected={lang === 'en'}>EN</option>
           </select>
@@ -40,7 +58,7 @@ const t = useTranslations(lang);
   const languageSelect = document.getElementById('language-select');
   
   languageSelect?.addEventListener('change', (e) => {
-    const target = e.target as HTMLSelectElement;
+    const target = e.target;
     const newLang = target.value;
     const currentPath = window.location.pathname.split('/').slice(2).join('/');
     window.location.href = `/${newLang}/${currentPath}`;

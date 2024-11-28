@@ -1,8 +1,6 @@
 ---
-import ThemeProvider from '../components/ui/ThemeToggle.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
-import { getRelativeLocaleUrl, getLocaleByPath } from 'astro:i18n';
 
 const lang = Astro.currentLocale || 'pt-br';
 
@@ -22,15 +20,39 @@ const { title, description } = Astro.props;
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
   <body class="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">
-    <ThemeProvider>
+    <div class="flex flex-col min-h-screen">
       <Header />
-      <main class="container mx-auto px-4 py-8">
+      <main class="flex-grow">
         <slot />
       </main>
       <Footer />
-    </ThemeProvider>
+    </div>
+    <script>
+      // Gerenciamento do tema
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined') {
+          const storedTheme = localStorage.getItem('theme');
+          if (storedTheme) {
+            return storedTheme;
+          }
+        }
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          return 'dark';
+        }
+        return 'light';
+      })();
+        
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+
+      window.localStorage.setItem('theme', theme);
+    </script>
   </body>
 </html>
