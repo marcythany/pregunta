@@ -1,0 +1,35 @@
+---
+import ThemeProvider from '../components/ui/ThemeToggle.astro';
+import Header from '../components/ui/Header.astro';
+import Footer from '../components/ui/Footer.astro';
+import { getLanguageFromURL as getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">
+    <ThemeProvider>
+      <Header />
+      <main class="container mx-auto px-4 py-8">
+        <slot />
+      </main>
+      <Footer />
+    </ThemeProvider>
+  </body>
+</html>
