@@ -1,0 +1,125 @@
+---
+---
+
+<div class="game-container">
+  <div id="game-status"></div>
+  <div id="score-display"></div>
+  <div id="timer-display"></div>
+  
+  <div id="question-container" class="hidden">
+    <h2 id="question-text"></h2>
+    <div id="options-container"></div>
+  </div>
+  
+  <button id="start-button">Iniciar Jogo</button>
+  <button id="reset-button" class="hidden">Reiniciar</button>
+</div>
+
+<script>
+  import { 
+    gameState, 
+    score, 
+    currentQuestion, 
+    timer,
+    startGame,
+    endGame,
+    updateScore,
+    resetGame 
+  } from '../store/game.js';
+
+  // Elementos do DOM
+  const gameStatus = document.getElementById('game-status');
+  const scoreDisplay = document.getElementById('score-display');
+  const timerDisplay = document.getElementById('timer-display');
+  const questionContainer = document.getElementById('question-container');
+  const questionText = document.getElementById('question-text');
+  const optionsContainer = document.getElementById('options-container');
+  const startButton = document.getElementById('start-button');
+  const resetButton = document.getElementById('reset-button');
+
+  // Listeners de estado
+  gameState.subscribe(state => {
+    gameStatus.textContent = `Estado: ${state}`;
+    if (state === 'playing') {
+      questionContainer.classList.remove('hidden');
+      startButton.classList.add('hidden');
+      resetButton.classList.remove('hidden');
+    } else {
+      questionContainer.classList.add('hidden');
+      startButton.classList.remove('hidden');
+      resetButton.classList.add('hidden');
+    }
+  });
+
+  score.subscribe(value => {
+    scoreDisplay.textContent = `Pontuação: ${value}`;
+  });
+
+  timer.subscribe(value => {
+    timerDisplay.textContent = `Tempo: ${value}s`;
+  });
+
+  currentQuestion.subscribe(question => {
+    if (question.question) {
+      questionText.textContent = question.question;
+      optionsContainer.innerHTML = '';
+      
+      question.options.forEach(option => {
+        const button = document.createElement('button');
+        button.textContent = option;
+        button.addEventListener('click', () => checkAnswer(option));
+        optionsContainer.appendChild(button);
+      });
+    }
+  });
+
+  // Event listeners
+  startButton.addEventListener('click', () => {
+    startGame();
+  });
+
+  resetButton.addEventListener('click', () => {
+    resetGame();
+  });
+
+  function checkAnswer(selectedOption) {
+    const correct = currentQuestion.get().correctAnswer === selectedOption;
+    if (correct) {
+      updateScore(10);
+    }
+    // Aqui você pode adicionar lógica para mostrar feedback e passar para próxima pergunta
+  }
+</script>
+
+<style>
+  .hidden {
+    display: none;
+  }
+
+  .game-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  #options-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #4F46E5;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  button:hover {
+    background-color: #4338CA;
+  }
+</style>

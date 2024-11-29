@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { atom, useAtom } from 'nanostores';
+import React from 'react';
+import { atom } from 'nanostores';
+import { useStore } from '@nanostores/react';
 
 // Store para os toasts
 export const toastsStore = atom([]);
@@ -14,7 +15,7 @@ export function addToast(message, type = 'success', duration = 5000) {
 }
 
 export function ToastContainer() {
-  const [toasts] = useAtom(toastsStore);
+  const toasts = useStore(toastsStore);
 
   return (
     <div className="fixed bottom-4 right-4 z-50 space-y-2">
