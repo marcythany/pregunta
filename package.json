@@ -13,6 +13,7 @@
     "@astrojs/react": "^3.6.3",
     "@astrojs/tailwind": "^5.1.2",
     "@nanostores/react": "^0.8.1",
+    "@tailwindcss/typography": "^0.5.15",
     "astro": "^4.16.16",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.36.4",

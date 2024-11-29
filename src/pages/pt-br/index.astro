@@ -1,0 +1,124 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { QuestionCard } from '../../components/ui/QuestionCard';
+import { CreateQuestionButton } from '../../components/ui/CreateQuestionButton';
+import { UserMenu } from '../../components/ui/UserMenu';
+import { AuthModal } from '../../components/ui/AuthModal';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+// Buscar perguntas do servidor
+const response = await fetch(`${import.meta.env.PUBLIC_API_URL || ''}/api/questions`);
+const { questions = [], pagination } = await response.json();
+---
+
+<Layout title="Pregunta - Sua Plataforma de Perguntas e Respostas">
+  <main class="container mx-auto px-4 py-8">
+    <!-- Header com navegação e menu de usuário -->
+    <header class="flex justify-between items-center mb-8">
+      <nav class="flex space-x-4">
+        <a href="#" class="text-gray-600 hover:text-gray-900">Recentes</a>
+        <a href="#" class="text-gray-600 hover:text-gray-900">Mais Votadas</a>
+        <a href="#" class="text-gray-600 hover:text-gray-900">Sem Resposta</a>
+      </nav>
+      
+      <UserMenu client:load />
+    </header>
+
+    <!-- Filtros e Busca -->
+    <div class="mb-8">
+      <div class="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Buscar perguntas..."
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="">Todas as categorias</option>
+          <option value="tecnologia">Tecnologia</option>
+          <option value="ciencia">Ciência</option>
+          <option value="historia">História</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Lista de Perguntas -->
+    <div class="space-y-6">
+      {questions.map((question) => (
+        <QuestionCard question={question} client:load />
+      ))}
+    </div>
+
+    <!-- Paginação -->
+    {pagination?.totalPages > 1 && (
+      <div class="flex justify-center mt-8">
+        <nav class="inline-flex rounded-md shadow">
+          <a
+            href={`?page=${Math.max(1, pagination.page - 1)}`}
+            class={`px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
+              pagination.page <= 1 ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Anterior
+          </a>
+          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((pageNum) => (
+            <a
+              href={`?page=${pageNum}`}
+              class={`px-3 py-2 border border-gray-300 text-sm font-medium ${
+                pageNum === pagination.page
+                  ? 'bg-indigo-50 text-indigo-600'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {pageNum}
+            </a>
+          ))}
+          <a
+            href={`?page=${Math.min(pagination.totalPages, pagination.page + 1)}`}
+            class={`px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
+              pagination.page >= pagination.totalPages ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Próxima
+          </a>
+        </nav>
+      </div>
+    )}
+
+    <!-- Botão de Criar Pergunta -->
+    <CreateQuestionButton client:load />
+
+    <!-- Modal de Autenticação -->
+    <AuthModal client:load isOpen={false} onClose={() => {}} />
+
+  </main>
+</Layout>
+
+<script>
+  // Inicializar estado da aplicação
+  import { userStore, setUser, setToken, setPoints, setPermissions } from '../../stores/authStore';
+  
+  // Recuperar token do localStorage
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setToken(token);
+        setUser(userData);
+        setPoints(userData.points || 0);
+        setPermissions(userData.permissions || []);
+      } else {
+        localStorage.removeItem('token');
+      }
+    } catch (err) {
+      console.error('Erro ao recuperar dados do usuário:', err.message);
+      localStorage.removeItem('token');
+    }
+  }
+</script>

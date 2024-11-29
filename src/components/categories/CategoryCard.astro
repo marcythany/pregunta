@@ -1,0 +1,56 @@
+---
+interface Props {
+  title: string;
+  imageUrl: string;
+}
+
+const { title, imageUrl } = Astro.props;
+
+// Cores pastéis para categorias
+const pastelColors = {
+  light: [
+    '#F0E6EF', // Rosa pastel claro
+    '#E6F0EF', // Verde-água pastel claro
+    '#EFF0E6', // Amarelo pastel claro
+    '#E6EFF0', // Azul pastel claro
+  ],
+  dark: [
+    '#4A3E49', // Rosa pastel escuro
+    '#3E4A49', // Verde-água pastel escuro
+    '#494A3E', // Amarelo pastel escuro
+    '#3E494A', // Azul pastel escuro
+  ]
+};
+
+const randomIndex = Math.floor(Math.random() * pastelColors.light.length);
+const randomPastelLight = pastelColors.light[randomIndex];
+const randomPastelDark = pastelColors.dark[randomIndex];
+---
+
+<div class="group relative overflow-hidden rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1">
+  <!-- Overlay gradiente -->
+  <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  
+  <!-- Imagem -->
+  <div class="aspect-[4/3] overflow-hidden">
+    <img 
+      src={imageUrl} 
+      alt={title}
+      class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+      loading="lazy"
+    />
+  </div>
+  
+  <!-- Título -->
+  <div class="absolute inset-x-0 bottom-0 p-6">
+    <h3 class="text-xl font-display font-semibold text-white opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+      {title}
+    </h3>
+  </div>
+</div>
+
+<style>
+  .group:hover {
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  }
+</style>

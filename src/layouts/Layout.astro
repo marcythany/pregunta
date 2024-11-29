@@ -1,14 +1,10 @@
 ---
-import ThemeProvider from '../components/ui/ThemeToggle.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
-<<<<<<< Updated upstream
-import { getLanguageFromURL as getLangFromUrl } from '../i18n/utils';
-=======
 import { ToastContainer } from '../components/ui/Toast';
->>>>>>> Stashed changes
+import { getLanguageFromURL as getLangFromUrl } from '../i18n/utils';
 
-const lang = getLangFromUrl(Astro.url);
+const lang = Astro.currentLocale || 'pt-br';
 
 interface Props {
   title: string;
@@ -17,9 +13,6 @@ interface Props {
   type?: string;
 }
 
-<<<<<<< Updated upstream
-const { title, description } = Astro.props;
-=======
 const { 
   title, 
   description = "Pregunta - O jogo de perguntas e respostas",
@@ -28,23 +21,18 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
->>>>>>> Stashed changes
----
 
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} class="h-full">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<<<<<<< Updated upstream
-=======
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <meta name="generator" content={Astro.generator} />
     
     <!-- SEO -->
->>>>>>> Stashed changes
     <title>{title}</title>
     <link rel="canonical" href={canonicalURL} />
     <meta name="robots" content="index, follow" />
@@ -67,16 +55,28 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192x192.png" />
   </head>
-  <body class="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">
-    <ThemeProvider>
+  <body class="h-full font-body bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 antialiased">
+    <div class="min-h-full flex flex-col">
       <Header />
-      <main class="container mx-auto px-4 py-8">
-        <slot />
-      </main>
+      
+      <div class="flex-grow relative overflow-hidden">
+        <!-- Elementos decorativos de fundo -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+          <!-- Círculos decorativos -->
+          <div class="absolute top-20 left-10 w-64 h-64 bg-accent-yellow/10 dark:bg-accent-purple/10 rounded-full blur-3xl animate-float"></div>
+          <div class="absolute bottom-40 right-20 w-96 h-96 bg-accent-orange/10 dark:bg-accent-pink/10 rounded-full blur-3xl animate-float" style="animation-delay: -2s;"></div>
+          <div class="absolute top-1/2 left-1/2 w-72 h-72 bg-accent-green/10 dark:bg-accent-yellow/10 rounded-full blur-3xl animate-float" style="animation-delay: -4s;"></div>
+        </div>
+
+        <!-- Conteúdo principal -->
+        <main class="relative">
+          <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <slot />
+          </div>
+        </main>
+      </div>
+
       <Footer />
-<<<<<<< Updated upstream
-    </ThemeProvider>
-=======
       
       <!-- Toast Container -->
       <ToastContainer client:load />
@@ -98,17 +98,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       }
       
       window.localStorage.setItem('theme', theme || 'light');
-
-      // Service Worker Registration
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(registration => {
-            console.log('SW registered:', registration);
-          }).catch(error => {
-            console.log('SW registration failed:', error);
-          });
-        });
-      }
     </script>
 
     <style>
@@ -134,6 +123,5 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         animation: float 6s ease-in-out infinite;
       }
     </style>
->>>>>>> Stashed changes
   </body>
 </html>
