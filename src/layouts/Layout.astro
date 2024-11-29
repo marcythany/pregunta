@@ -2,16 +2,33 @@
 import ThemeProvider from '../components/ui/ThemeToggle.astro';
 import Header from '../components/ui/Header.astro';
 import Footer from '../components/ui/Footer.astro';
+<<<<<<< Updated upstream
 import { getLanguageFromURL as getLangFromUrl } from '../i18n/utils';
+=======
+import { ToastContainer } from '../components/ui/Toast';
+>>>>>>> Stashed changes
 
 const lang = getLangFromUrl(Astro.url);
 
 interface Props {
   title: string;
   description?: string;
+  image?: string;
+  type?: string;
 }
 
+<<<<<<< Updated upstream
 const { title, description } = Astro.props;
+=======
+const { 
+  title, 
+  description = "Pregunta - O jogo de perguntas e respostas",
+  image = "/og-image.png",
+  type = "website"
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+>>>>>>> Stashed changes
 ---
 
 <!doctype html>
@@ -21,7 +38,34 @@ const { title, description } = Astro.props;
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<<<<<<< Updated upstream
+=======
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="generator" content={Astro.generator} />
+    
+    <!-- SEO -->
+>>>>>>> Stashed changes
     <title>{title}</title>
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, Astro.site)} />
+    <meta property="og:url" content={canonicalURL} />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(image, Astro.site)} />
+    
+    <!-- PWA -->
+    <meta name="theme-color" content="#4F46E5" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
   </head>
   <body class="min-h-screen bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text">
     <ThemeProvider>
@@ -30,6 +74,66 @@ const { title, description } = Astro.props;
         <slot />
       </main>
       <Footer />
+<<<<<<< Updated upstream
     </ThemeProvider>
+=======
+      
+      <!-- Toast Container -->
+      <ToastContainer client:load />
+    </div>
+
+    <script>
+      // Theme handling
+      const theme = (() => {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+          return localStorage.getItem('theme');
+        }
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      })();
+    
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+      
+      window.localStorage.setItem('theme', theme || 'light');
+
+      // Service Worker Registration
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(registration => {
+            console.log('SW registered:', registration);
+          }).catch(error => {
+            console.log('SW registration failed:', error);
+          });
+        });
+      }
+    </script>
+
+    <style>
+      /* Suavizar transições de tema */
+      body {
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+      }
+      
+      /* Melhorar legibilidade */
+      body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Animações */
+      @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+        100% { transform: translateY(0px); }
+      }
+
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+    </style>
+>>>>>>> Stashed changes
   </body>
 </html>
