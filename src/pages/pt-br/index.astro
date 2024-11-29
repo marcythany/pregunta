@@ -1,125 +1,113 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { QuestionCard } from '../../components/ui/QuestionCard';
-import { CreateQuestionButton } from '../../components/ui/CreateQuestionButton';
-import { UserMenu } from '../../components/ui/UserMenu';
-import { AuthModal } from '../../components/ui/AuthModal';
-import { getRelativeLocaleUrl } from 'astro:i18n';
-
-// Buscar perguntas do servidor
-const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:3000';
-const response = await fetch(`${API_URL}/api/questions`);
-const { questions = [], pagination } = await response.json();
+import { Image } from 'astro:assets';
 ---
 
-<Layout title="Pregunta - Sua Plataforma de Perguntas e Respostas">
-  <main class="container mx-auto px-4 py-8">
-    <!-- Header com navegação e menu de usuário -->
-    <header class="flex justify-between items-center mb-8">
-      <nav class="flex space-x-4">
-        <a href="#" class="text-gray-600 hover:text-gray-900">Recentes</a>
-        <a href="#" class="text-gray-600 hover:text-gray-900">Mais Votadas</a>
-        <a href="#" class="text-gray-600 hover:text-gray-900">Sem Resposta</a>
-      </nav>
-      
-      <UserMenu client:load />
-    </header>
-
-    <!-- Filtros e Busca -->
-    <div class="mb-8">
-      <div class="flex gap-4 mb-4">
-        <input
-          type="text"
-          placeholder="Buscar perguntas..."
-          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-          <option value="">Todas as categorias</option>
-          <option value="tecnologia">Tecnologia</option>
-          <option value="ciencia">Ciência</option>
-          <option value="historia">História</option>
-        </select>
-      </div>
+<Layout title="Pregunta - Jogo de Trivia">
+  <!-- Hero Section -->
+  <section class="relative h-[500px] w-full bg-gradient-to-br from-slate-800 to-slate-900 dark:from-gray-900 dark:to-gray-950 flex items-center justify-center">
+    <div class="text-center space-y-6">
+      <h1 class="text-5xl font-bold text-white">Mergulhe na Diversão</h1>
+      <p class="text-xl text-gray-300">Teste seu conhecimento e compita com jogadores do mundo todo</p>
+      <button class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
+        Jogar Agora
+      </button>
     </div>
+  </section>
 
-    <!-- Lista de Perguntas -->
-    <div class="space-y-6">
-      {questions.map((question) => (
-        <QuestionCard question={question} client:load />
+  <!-- Categories Section -->
+  <section class="py-16 px-4 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Categorias</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {[
+        { name: 'Praia', image: 'https://picsum.photos/seed/beach/400/300' },
+        { name: 'Montanha', image: 'https://picsum.photos/seed/mountain/400/300' },
+        { name: 'Cidade', image: 'https://picsum.photos/seed/city/400/300' },
+        { name: 'Floresta', image: 'https://picsum.photos/seed/forest/400/300' },
+        { name: 'Festival de Música', image: 'https://picsum.photos/seed/music/400/300' },
+        { name: 'Tour Histórico', image: 'https://picsum.photos/seed/history/400/300' },
+        { name: 'Mercado Local', image: 'https://picsum.photos/seed/market/400/300' },
+        { name: 'Lago', image: 'https://picsum.photos/seed/lake/400/300' }
+      ].map((category) => (
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer">
+          <img 
+            src={category.image} 
+            alt={category.name}
+            class="w-full h-48 object-cover"
+            loading="lazy"
+          />
+          <div class="p-4">
+            <h3 class="font-semibold text-lg text-gray-900 dark:text-white">{category.name}</h3>
+          </div>
+        </div>
       ))}
     </div>
+  </section>
 
-    <!-- Paginação -->
-    {pagination?.totalPages > 1 && (
-      <div class="flex justify-center mt-8">
-        <nav class="inline-flex rounded-md shadow">
-          <a
-            href={`?page=${Math.max(1, pagination.page - 1)}`}
-            class={`px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
-              pagination.page <= 1 ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Anterior
-          </a>
-          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((pageNum) => (
-            <a
-              href={`?page=${pageNum}`}
-              class={`px-3 py-2 border border-gray-300 text-sm font-medium ${
-                pageNum === pagination.page
-                  ? 'bg-indigo-50 text-indigo-600'
-                  : 'bg-white text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {pageNum}
-            </a>
-          ))}
-          <a
-            href={`?page=${Math.min(pagination.totalPages, pagination.page + 1)}`}
-            class={`px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
-              pagination.page >= pagination.totalPages ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            Próxima
-          </a>
-        </nav>
+  <!-- Top Players Section -->
+  <section class="py-16 px-4 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold mb-8 text-gray-900 dark:text-white">Top 10 Jogadores</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Left Column -->
+      <div class="space-y-4">
+        {[
+          { name: 'Alexandre J.', username: '@estrela', score: 9500, avatar: 'https://picsum.photos/seed/alex/64/64' },
+          { name: 'Júlia L.', username: '@progamer', score: 9400, avatar: 'https://picsum.photos/seed/julia/64/64' },
+          { name: 'Samuel T.', username: '@recordista', score: 9300, avatar: 'https://picsum.photos/seed/samuel/64/64' },
+          { name: 'Carlos M.', username: '@campeao', score: 9200, avatar: 'https://picsum.photos/seed/carlos/64/64' },
+          { name: 'Pedro K.', username: '@reidatrivia', score: 9100, avatar: 'https://picsum.photos/seed/pedro/64/64' },
+        ].map((player, index) => (
+          <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div class="flex items-center space-x-4">
+              <span class="text-xl font-bold text-gray-500 dark:text-gray-400">#{index + 1}</span>
+              <img 
+                src={player.avatar} 
+                alt={`Avatar de ${player.name}`}
+                class="w-12 h-12 rounded-full"
+                loading="lazy"
+              />
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-white">{player.name}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{player.username}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="font-bold text-gray-900 dark:text-white">{player.score}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Melhor Pontuação</p>
+            </div>
+          </div>
+        ))}
       </div>
-    )}
-
-    <!-- Botão de Criar Pergunta -->
-    <CreateQuestionButton client:load />
-
-    <!-- Modal de Autenticação -->
-    <AuthModal client:load isOpen={false} onClose={() => {}} />
-
-  </main>
+      <!-- Right Column -->
+      <div class="space-y-4">
+        {[
+          { name: 'João B.', username: '@mestre', score: 9000, avatar: 'https://picsum.photos/seed/joao/64/64' },
+          { name: 'Thais R.', username: '@genio', score: 8900, avatar: 'https://picsum.photos/seed/thais/64/64' },
+          { name: 'Marina P.', username: '@craque', score: 8800, avatar: 'https://picsum.photos/seed/marina/64/64' },
+          { name: 'Diego D.', username: '@expert', score: 8700, avatar: 'https://picsum.photos/seed/diego/64/64' },
+          { name: 'Rafael F.', username: '@cerebro', score: 8600, avatar: 'https://picsum.photos/seed/rafael/64/64' },
+        ].map((player, index) => (
+          <div class="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <div class="flex items-center space-x-4">
+              <span class="text-xl font-bold text-gray-500 dark:text-gray-400">#{index + 6}</span>
+              <img 
+                src={player.avatar} 
+                alt={`Avatar de ${player.name}`}
+                class="w-12 h-12 rounded-full"
+                loading="lazy"
+              />
+              <div>
+                <h3 class="font-semibold text-gray-900 dark:text-white">{player.name}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{player.username}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="font-bold text-gray-900 dark:text-white">{player.score}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">Melhor Pontuação</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 </Layout>
-
-<script>
-  // Inicializar estado da aplicação
-  import { userStore, setUser, setToken, setPoints, setPermissions } from '../../stores/authStore';
-  
-  // Recuperar token do localStorage
-  const token = localStorage.getItem('token');
-  if (token) {
-    try {
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        setToken(token);
-        setUser(userData);
-        setPoints(userData.points || 0);
-        setPermissions(userData.permissions || []);
-      } else {
-        localStorage.removeItem('token');
-      }
-    } catch (err) {
-      console.error('Erro ao recuperar dados do usuário:', err.message);
-      localStorage.removeItem('token');
-    }
-  }
-</script>
