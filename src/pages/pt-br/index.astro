@@ -1,83 +1,124 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CategoryCard from '../../components/categories/CategoryCard.astro';
-import PlayerCard from '../../components/ranking/PlayerCard.astro';
+import { QuestionCard } from '../../components/ui/QuestionCard';
+import { CreateQuestionButton } from '../../components/ui/CreateQuestionButton';
+import { UserMenu } from '../../components/ui/UserMenu';
+import { AuthModal } from '../../components/ui/AuthModal';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
-const categories = [
-  { title: 'Praia', imageUrl: 'https://picsum.photos/id/1000/300/200' },
-  { title: 'Aventura na Montanha', imageUrl: 'https://picsum.photos/id/1018/300/200' },
-  { title: 'Luzes da Cidade', imageUrl: 'https://picsum.photos/id/1033/300/200' },
-  { title: 'Escape na Floresta', imageUrl: 'https://picsum.photos/id/1043/300/200' },
-  { title: 'Festival de Música', imageUrl: 'https://picsum.photos/id/1082/300/200' },
-  { title: 'Tour Histórico', imageUrl: 'https://picsum.photos/id/1061/300/200' },
-  { title: 'Mercado Local', imageUrl: 'https://picsum.photos/id/292/300/200' },
-  { title: 'Retiro no Lago', imageUrl: 'https://picsum.photos/id/1015/300/200' },
-];
-
-const topPlayers = [
-  { name: 'Alex J.', username: '@starplayer', score: 9500, avatarUrl: 'https://picsum.photos/id/64/150/150', favoriteColor: '#FFD93D' },
-  { name: 'Jamie L.', username: '@gamerpro', score: 9400, avatarUrl: 'https://picsum.photos/id/65/150/150', favoriteColor: '#FF8400' },
-  { name: 'Sam T.', username: '@highscore', score: 9300, avatarUrl: 'https://picsum.photos/id/66/150/150', favoriteColor: '#4CAF50' },
-  { name: 'Chris M.', username: '@champion', score: 9200, avatarUrl: 'https://picsum.photos/id/67/150/150', favoriteColor: '#FF69B4' },
-];
-
-const playURL = getRelativeLocaleUrl('pt-br', 'play');
-const aboutURL = getRelativeLocaleUrl('pt-br', 'about');
+// Buscar perguntas do servidor
+const response = await fetch(`${import.meta.env.PUBLIC_API_URL || ''}/api/questions`);
+const { questions = [], pagination } = await response.json();
 ---
 
-<Layout title="Pregunta - Jogo de Perguntas e Respostas" description="Um jogo de perguntas e respostas moderno e interativo">
-  <!-- Hero Section -->
-  <section class="relative py-20 overflow-hidden">
-    <div class="container mx-auto px-4">
-      <div class="max-w-3xl mx-auto text-center">
-        <h1 class="font-display text-6xl font-bold mb-6 bg-gradient-to-r from-accent-orange via-accent-purple to-accent-pink bg-clip-text text-transparent animate-float">
-          Mergulhe na Diversão do Trivia
-        </h1>
-        <p class="text-xl mb-8 text-gray-600 dark:text-gray-300">
-          Desafie seus amigos, aprenda coisas novas e divirta-se com nosso jogo de perguntas e respostas!
-        </p>
-        <div class="flex gap-4 justify-center">
-          <a 
-            href={playURL}
-            class="px-8 py-4 bg-accent-orange hover:bg-accent-orange/90 text-white rounded-full font-semibold shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            Jogar Agora
-          </a>
-          <a 
-            href={aboutURL}
-            class="px-8 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-white rounded-full font-semibold shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            Saiba Mais
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+<Layout title="Pregunta - Sua Plataforma de Perguntas e Respostas">
+  <main class="container mx-auto px-4 py-8">
+    <!-- Header com navegação e menu de usuário -->
+    <header class="flex justify-between items-center mb-8">
+      <nav class="flex space-x-4">
+        <a href="#" class="text-gray-600 hover:text-gray-900">Recentes</a>
+        <a href="#" class="text-gray-600 hover:text-gray-900">Mais Votadas</a>
+        <a href="#" class="text-gray-600 hover:text-gray-900">Sem Resposta</a>
+      </nav>
+      
+      <UserMenu client:load />
+    </header>
 
-  <!-- Categories Section -->
-  <section class="py-16 px-4">
-    <div class="container mx-auto">
-      <h2 class="text-4xl font-display font-bold mb-2 text-center">Categorias Temáticas</h2>
-      <p class="text-gray-600 dark:text-gray-300 text-center mb-12">Explore nossos diversos temas e encontre seu favorito</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {categories.map(category => (
-          <CategoryCard {...category} />
-        ))}
+    <!-- Filtros e Busca -->
+    <div class="mb-8">
+      <div class="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Buscar perguntas..."
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="">Todas as categorias</option>
+          <option value="tecnologia">Tecnologia</option>
+          <option value="ciencia">Ciência</option>
+          <option value="historia">História</option>
+        </select>
       </div>
     </div>
-  </section>
 
-  <!-- Top Players Section -->
-  <section class="py-16 px-4">
-    <div class="container mx-auto">
-      <h2 class="text-4xl font-display font-bold mb-2 text-center">Hall da Fama</h2>
-      <p class="text-gray-600 dark:text-gray-300 text-center mb-12">Conheça nossos jogadores mais dedicados</p>
-      <div class="grid gap-4 max-w-2xl mx-auto">
-        {topPlayers.map(player => (
-          <PlayerCard {...player} />
-        ))}
-      </div>
+    <!-- Lista de Perguntas -->
+    <div class="space-y-6">
+      {questions.map((question) => (
+        <QuestionCard question={question} client:load />
+      ))}
     </div>
-  </section>
+
+    <!-- Paginação -->
+    {pagination?.totalPages > 1 && (
+      <div class="flex justify-center mt-8">
+        <nav class="inline-flex rounded-md shadow">
+          <a
+            href={`?page=${Math.max(1, pagination.page - 1)}`}
+            class={`px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
+              pagination.page <= 1 ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Anterior
+          </a>
+          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((pageNum) => (
+            <a
+              href={`?page=${pageNum}`}
+              class={`px-3 py-2 border border-gray-300 text-sm font-medium ${
+                pageNum === pagination.page
+                  ? 'bg-indigo-50 text-indigo-600'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {pageNum}
+            </a>
+          ))}
+          <a
+            href={`?page=${Math.min(pagination.totalPages, pagination.page + 1)}`}
+            class={`px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
+              pagination.page >= pagination.totalPages ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Próxima
+          </a>
+        </nav>
+      </div>
+    )}
+
+    <!-- Botão de Criar Pergunta -->
+    <CreateQuestionButton client:load />
+
+    <!-- Modal de Autenticação -->
+    <AuthModal client:load isOpen={false} onClose={() => {}} />
+
+  </main>
 </Layout>
+
+<script>
+  // Inicializar estado da aplicação
+  import { userStore, setUser, setToken, setPoints, setPermissions } from '../../stores/authStore';
+  
+  // Recuperar token do localStorage
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setToken(token);
+        setUser(userData);
+        setPoints(userData.points || 0);
+        setPermissions(userData.permissions || []);
+      } else {
+        localStorage.removeItem('token');
+      }
+    } catch (err) {
+      console.error('Erro ao recuperar dados do usuário:', err.message);
+      localStorage.removeItem('token');
+    }
+  }
+</script>

@@ -1,83 +1,126 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import CategoryCard from '../../components/categories/CategoryCard.astro';
-import PlayerCard from '../../components/ranking/PlayerCard.astro';
+import { QuestionCard } from '../../components/ui/QuestionCard';
+import { CreateQuestionButton } from '../../components/ui/CreateQuestionButton';
+import { UserMenu } from '../../components/ui/UserMenu';
+import { AuthModal } from '../../components/ui/AuthModal';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
-const categories = [
-  { title: 'Beach', imageUrl: 'https://picsum.photos/id/1000/300/200' },
-  { title: 'Mountain Adventure', imageUrl: 'https://picsum.photos/id/1018/300/200' },
-  { title: 'City Lights', imageUrl: 'https://picsum.photos/id/1033/300/200' },
-  { title: 'Forest Escape', imageUrl: 'https://picsum.photos/id/1043/300/200' },
-  { title: 'Music Festival', imageUrl: 'https://picsum.photos/id/1082/300/200' },
-  { title: 'Historic Tour', imageUrl: 'https://picsum.photos/id/1061/300/200' },
-  { title: 'Local Market', imageUrl: 'https://picsum.photos/id/292/300/200' },
-  { title: 'Lake Retreat', imageUrl: 'https://picsum.photos/id/1015/300/200' },
-];
-
-const topPlayers = [
-  { name: 'Alex J.', username: '@starplayer', score: 9500, avatarUrl: 'https://picsum.photos/id/64/150/150', favoriteColor: '#FFD93D' },
-  { name: 'Jamie L.', username: '@gamerpro', score: 9400, avatarUrl: 'https://picsum.photos/id/65/150/150', favoriteColor: '#FF8400' },
-  { name: 'Sam T.', username: '@highscore', score: 9300, avatarUrl: 'https://picsum.photos/id/66/150/150', favoriteColor: '#4CAF50' },
-  { name: 'Chris M.', username: '@champion', score: 9200, avatarUrl: 'https://picsum.photos/id/67/150/150', favoriteColor: '#FF69B4' },
-];
+// Fetch questions from server
+const response = await fetch(`${import.meta.env.PUBLIC_API_URL || ''}/api/questions`);
+const { questions = [], pagination } = await response.json();
 
 const playURL = getRelativeLocaleUrl('en', 'play');
 const aboutURL = getRelativeLocaleUrl('en', 'about');
 ---
 
-<Layout title="Pregunta - Quiz Game" description="A modern and interactive quiz game">
-  <!-- Hero Section -->
-  <section class="relative py-20 overflow-hidden">
-    <div class="container mx-auto px-4">
-      <div class="max-w-3xl mx-auto text-center">
-        <h1 class="font-display text-6xl font-bold mb-6 bg-gradient-to-r from-accent-orange via-accent-purple to-accent-pink bg-clip-text text-transparent animate-float">
-          Dive into Trivia Fun
-        </h1>
-        <p class="text-xl mb-8 text-gray-600 dark:text-gray-300">
-          Challenge your friends, learn new things, and have fun with our quiz game!
-        </p>
-        <div class="flex gap-4 justify-center">
-          <a 
-            href={playURL}
-            class="px-8 py-4 bg-accent-orange hover:bg-accent-orange/90 text-white rounded-full font-semibold shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            Play Now
-          </a>
-          <a 
-            href={aboutURL}
-            class="px-8 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-800 dark:text-white rounded-full font-semibold shadow-soft hover:shadow-soft-lg transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            Learn More
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+<Layout title="Pregunta - Your Q&A Platform">
+  <main class="container mx-auto px-4 py-8">
+    <!-- Header with navigation and user menu -->
+    <header class="flex justify-between items-center mb-8">
+      <nav class="flex space-x-4">
+        <a href="#" class="text-gray-600 hover:text-gray-900">Recent</a>
+        <a href="#" class="text-gray-600 hover:text-gray-900">Most Voted</a>
+        <a href="#" class="text-gray-600 hover:text-gray-900">Unanswered</a>
+      </nav>
+      
+      <UserMenu client:load />
+    </header>
 
-  <!-- Categories Section -->
-  <section class="py-16 px-4">
-    <div class="container mx-auto">
-      <h2 class="text-4xl font-display font-bold mb-2 text-center">Themed Categories</h2>
-      <p class="text-gray-600 dark:text-gray-300 text-center mb-12">Explore our diverse themes and find your favorite</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {categories.map(category => (
-          <CategoryCard {...category} />
-        ))}
+    <!-- Filters and Search -->
+    <div class="mb-8">
+      <div class="flex gap-4 mb-4">
+        <input
+          type="text"
+          placeholder="Search questions..."
+          class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+        <select class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <option value="">All categories</option>
+          <option value="technology">Technology</option>
+          <option value="science">Science</option>
+          <option value="history">History</option>
+        </select>
       </div>
     </div>
-  </section>
 
-  <!-- Top Players Section -->
-  <section class="py-16 px-4">
-    <div class="container mx-auto">
-      <h2 class="text-4xl font-display font-bold mb-2 text-center">Hall of Fame</h2>
-      <p class="text-gray-600 dark:text-gray-300 text-center mb-12">Meet our most dedicated players</p>
-      <div class="grid gap-4 max-w-2xl mx-auto">
-        {topPlayers.map(player => (
-          <PlayerCard {...player} />
-        ))}
-      </div>
+    <!-- Questions List -->
+    <div class="space-y-6">
+      {questions.map((question) => (
+        <QuestionCard question={question} client:load />
+      ))}
     </div>
-  </section>
+
+    <!-- Pagination -->
+    {pagination?.totalPages > 1 && (
+      <div class="flex justify-center mt-8">
+        <nav class="inline-flex rounded-md shadow">
+          <a
+            href={`?page=${Math.max(1, pagination.page - 1)}`}
+            class={`px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
+              pagination.page <= 1 ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Previous
+          </a>
+          {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((pageNum) => (
+            <a
+              href={`?page=${pageNum}`}
+              class={`px-3 py-2 border border-gray-300 text-sm font-medium ${
+                pageNum === pagination.page
+                  ? 'bg-indigo-50 text-indigo-600'
+                  : 'bg-white text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              {pageNum}
+            </a>
+          ))}
+          <a
+            href={`?page=${Math.min(pagination.totalPages, pagination.page + 1)}`}
+            class={`px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
+              pagination.page >= pagination.totalPages ? 'text-gray-300' : 'text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Next
+          </a>
+        </nav>
+      </div>
+    )}
+
+    <!-- Create Question Button -->
+    <CreateQuestionButton client:load />
+
+    <!-- Auth Modal -->
+    <AuthModal client:load isOpen={false} onClose={() => {}} />
+  </main>
 </Layout>
+
+<script>
+  // Initialize application state
+  import { userStore, setUser, setToken, setPoints, setPermissions } from '../../stores/authStore';
+  
+  // Retrieve token from localStorage
+  const token = localStorage.getItem('token');
+  if (token) {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        setToken(token);
+        setUser(userData);
+        setPoints(userData.points || 0);
+        setPermissions(userData.permissions || []);
+      } else {
+        localStorage.removeItem('token');
+      }
+    } catch (err) {
+      console.error('Error retrieving user data:', err.message);
+      localStorage.removeItem('token');
+    }
+  }
+</script>
