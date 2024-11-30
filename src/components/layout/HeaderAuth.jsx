@@ -16,6 +16,7 @@ export function HeaderAuth({ lang = 'pt-br' }) {
         const userData = await ApiService.get('auth/me');
         userStore.set({ isAuthenticated: true, user: userData });
       } catch (error) {
+        // Não mostrar erro 401 pois é esperado quando não está autenticado
         if (error.status !== 401) {
           console.error('Erro na verificação de autenticação:', error);
         }
@@ -23,7 +24,13 @@ export function HeaderAuth({ lang = 'pt-br' }) {
       }
     };
 
-    checkAuth();
+    // Verificar autenticação apenas se houver um token
+    const token = localStorage.getItem('token');
+    if (token) {
+      checkAuth();
+    } else {
+      userStore.set({ isAuthenticated: false, user: null });
+    }
   }, []);
 
   useEffect(() => {
