@@ -1,19 +1,10 @@
 import { AuthService } from '@/lib/auth/authService';
+import { PermissionService } from '@/lib/auth/permissionService';
 
 export const authMiddleware = AuthService.authMiddleware.bind(AuthService);
 
-export function requirePermission(permission) {
-  return async (context) => {
-    const user = context.user;
-    if (!AuthService.checkPermission(user, permission)) {
-      return new Response(JSON.stringify({ 
-        error: 'Forbidden',
-        requiredPermission: permission
-      }), {
-        status: 403,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    return null;
+export function requirePermission(action) {
+  return async (request) => {
+    return PermissionService.permissionMiddleware(request, action);
   };
 }
