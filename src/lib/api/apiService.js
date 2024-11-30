@@ -25,10 +25,14 @@ class ApiService {
         }
       });
       
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
       
       if (!response.ok) {
-        throw new Error(data.message || 'Erro na requisição');
+        throw new Error(data?.message || response.statusText || 'Erro na requisição');
+      }
+
+      if (!data) {
+        throw new Error('Resposta vazia do servidor');
       }
 
       // Se cache está habilitado e é um GET, salva no cache
