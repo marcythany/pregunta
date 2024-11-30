@@ -9,10 +9,17 @@ src/
 │   └── fonts/
 │
 ├── components/        # Componentes reutilizáveis
-│   ├── common/       # Componentes UI básicos usados em todo o app
-│   ├── layout/       # Componentes específicos de layout (Header, Footer)
-│   ├── features/     # Componentes específicos de funcionalidades (Auth, Questions)
-│   └── ui/          # Componentes UI compartilhados com estilização específica
+│   ├── features/     # Componentes específicos de funcionalidades
+│   │   ├── auth/     # Componentes de autenticação
+│   │   ├── categories/ # Componentes de categorias
+│   │   ├── game/     # Componentes do jogo
+│   │   ├── questions/ # Componentes de perguntas
+│   │   ├── ranking/  # Componentes de ranking
+│   │   └── welcome/  # Componentes de boas-vindas
+│   ├── layout/       # Componentes específicos de layout
+│   └── ui/           # Componentes UI compartilhados
+│       ├── base/     # Componentes base (Button, Card, etc)
+│       └── modals/   # Componentes de modal
 │
 ├── constants/        # Constantes e configurações
 │   ├── routes.js    # Definições de rotas
@@ -21,32 +28,42 @@ src/
 ├── hooks/           # Hooks personalizados do React
 │
 ├── i18n/           # Internacionalização
-│   ├── translations/
-│   └── config/
+│   ├── ui.js      # Traduções da interface
+│   ├── utils.js   # Utilitários de i18n
+│   └── useTranslations.js # Hook de traduções
 │
 ├── layouts/         # Layouts Astro
-│   ├── Layout.astro # Layout principal
-│   └── Auth.astro   # Layout específico de autenticação
+│   └── Layout.astro # Layout principal
 │
-├── lib/            # Configurações de bibliotecas de terceiros
+├── lib/            # Serviços e configurações
+│   ├── api/        # Serviço de API
+│   ├── auth/       # Serviço de autenticação
+│   ├── cache/      # Serviço de cache
+│   ├── db/         # Serviço de banco de dados
+│   └── services/   # Outros serviços
 │
 ├── middleware/     # Middleware SSR e manipuladores de rotas API
+│   ├── auth.js    # Middleware de autenticação
+│   └── i18n.js    # Middleware de internacionalização
 │
 ├── models/         # Modelos de dados e tipos
 │
-├── pages/          # Páginas de rotas (Astro e React)
+├── pages/          # Páginas e rotas
+│   ├── [lang]/    # Rotas com suporte a idiomas
 │   ├── api/       # Endpoints da API
-│   └── [...rest]  # Rotas da aplicação
+│   │   ├── auth/  # Endpoints de autenticação
+│   │   ├── questions/ # Endpoints de perguntas
+│   │   └── user/  # Endpoints de usuário
+│   ├── login/     # Páginas de login
+│   └── register/  # Páginas de registro
 │
 ├── stores/         # Gerenciamento de estado
+│   └── authStore.js # Store de autenticação
 │
-├── styles/         # Estilos globais e configurações do Tailwind
+├── styles/         # Estilos globais
 │
-└── utils/          # Funções utilitárias e auxiliares
-    ├── api.js     # Utilitários da API
-    ├── auth.js    # Utilitários de autenticação
-    └── helpers.js # Funções auxiliares gerais
-```
+└── utils/          # Funções utilitárias
+    └── permissions.js # Utilitários de permissões
 
 ## Princípios Fundamentais de Organização
 
@@ -57,16 +74,20 @@ src/
    - Mantenha rotas API em `pages/api` para operações do lado do servidor
 
 2. **Organização de Componentes**
-   - `common/`: Componentes básicos reutilizáveis (Button, Input, Card)
-   - `features/`: Componentes específicos de funcionalidades (Auth, Questions) agrupados por domínio
-   - `layout/`: Componentes de layout (Header, Footer) usando Astro e React quando necessário
+   - `features/`: Componentes específicos de funcionalidades (Auth, Questions, Game) agrupados por domínio
+   - `layout/`: Componentes de layout (Header) usando Astro e React quando necessário
    - `ui/`: Componentes UI compartilhados com estilização específica do Tailwind
+     - `base/`: Componentes base reutilizáveis (Button, Input, Card)
+     - `modals/`: Componentes de modal e diálogo
 
-3. **Gerenciamento de Estado**
-   - Use o estado do lado do servidor do Astro quando possível
-   - Use Nanostores (@nanostores/react) para gerenciamento de estado global
-   - Implemente Context API do React para estado local do cliente
-   - Mantenha as stores simples e focadas em domínios específicos (auth, questions)
+3. **Gerenciamento de Estado e Serviços**
+   - Serviços centralizados em `lib/` para funcionalidades principais:
+     - `ApiService`: Gerenciamento de chamadas HTTP
+     - `AuthService`: Autenticação e autorização
+     - `DbService`: Conexão com banco de dados
+     - `CacheService`: Gerenciamento de cache
+   - Stores para estado global usando Nanostores
+   - Middleware para funcionalidades SSR e API
 
 4. **Estilização com TailwindCSS**
    - Use classes Tailwind diretamente nos componentes
@@ -94,44 +115,41 @@ src/
 1. **Astro.js SSR**
    - Mantenha páginas o mais estáticas possível
    - Use renderização do lado do servidor para conteúdo dinâmico
-   - Implemente limites de erro adequados
-   - Trate estados de carregamento apropriadamente
+   - Implemente middleware para autenticação e i18n
+   - Utilize rotas dinâmicas com [lang] para internacionalização
    - Use recursos de SEO integrados do Astro
 
-2. **Componentes**
-   - Prefira componentes `.astro` para conteúdo estático
-   - Use componentes React (.jsx) para elementos interativos
-   - Usar JavaScript para manipulação de dados e interatividade
+2. **Arquitetura de Serviços**
+   - Use `DbService` para todas as conexões com MongoDB
+   - Utilize `ApiService` para chamadas HTTP padronizadas
+   - Implemente `AuthService` para gerenciamento de autenticação
+   - Use `CacheService` para otimização de performance
+   - Mantenha serviços como singletons para melhor gerenciamento de recursos
+
+3. **Componentes e UI**
+   - Organize componentes por domínio em `features/`
+   - Mantenha componentes base reutilizáveis em `ui/base/`
+   - Use componentes modais de `ui/modals/` para diálogos
+   - Implemente internacionalização usando o hook `useTranslations`
    - Siga o princípio da responsabilidade única
-   - Use validação adequada de props
-   - Implemente internacionalização (i18n) nos componentes
 
-3. **Manipulação de Dados**
-   - MongoDB para armazenamento persistente de dados
-   - Nanostores para gerenciamento de estado global
-   - Implemente estratégias adequadas de busca de dados
-   - Use busca de dados do lado do servidor do Astro quando possível
-   - Trate erros graciosamente
-   - Implemente estados de carregamento adequados
-   - Cache dados apropriadamente
+4. **Autenticação e Autorização**
+   - Use JWT para autenticação de usuários
+   - Implemente refresh tokens para sessões longas
+   - Verifique permissões usando middleware de autenticação
+   - Suporte múltiplos provedores de autenticação
+   - Mantenha dados sensíveis em variáveis de ambiente
 
-4. **Segurança**
-   - Implemente políticas CORS adequadas
-   - Valide entrada do usuário
-   - Use variáveis de ambiente para dados sensíveis
-   - Implemente fluxos de autenticação adequados
-   - Siga as melhores práticas de segurança para SSR
+5. **Internacionalização (i18n)**
+   - Use rotas dinâmicas [lang] para suporte multi-idioma
+   - Mantenha traduções centralizadas em `i18n/ui.js`
+   - Implemente detecção automática de idioma
+   - Use o hook `useTranslations` para acesso às traduções
+   - Suporte fallback para traduções ausentes
 
-5. **Fluxo de Desenvolvimento**
-   - Siga padrões de codificação consistentes
-   - Escreva mensagens de commit significativas
-   - Documente lógica complexa
-   - Escreva testes para funcionalidades críticas
-   - Revise mudanças de código minuciosamente
-
-6. **Implantação**
-   - Use otimização adequada de build
-   - Implemente pipelines de CI/CD
-   - Monitore métricas de performance
-   - Use logging adequado
-   - Implemente estratégias adequadas de backup
+6. **Performance e Otimização**
+   - Implemente caching adequado com `CacheService`
+   - Use lazy loading para componentes pesados
+   - Otimize carregamento de imagens
+   - Minimize requisições ao banco de dados
+   - Implemente estratégias de cache no cliente e servidor
