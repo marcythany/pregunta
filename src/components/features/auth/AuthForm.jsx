@@ -1,18 +1,16 @@
 import { useState } from 'react';
-import Button from '../../common/Button';
-import { Github, Mail } from 'lucide-react';
+import { Github } from 'lucide-react';
 
-export default function AuthForm({ mode = 'login' }) {
+export default function AuthForm({ mode = 'login', onSuccess = () => {}, onError = () => {} }) {
+  const [isLogin, setIsLogin] = useState(mode === 'login');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  const isLogin = mode === 'login';
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,7 +53,11 @@ export default function AuthForm({ mode = 'login' }) {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          ...(isLogin ? {} : { username: formData.username })
+        })
       });
 
       const data = await response.json();
@@ -64,169 +66,153 @@ export default function AuthForm({ mode = 'login' }) {
         throw new Error(data.message || 'Erro ao processar requisição');
       }
 
-      // Guardar token de acesso
-      localStorage.setItem('accessToken', data.accessToken);
-      
-      // Redirecionar para página inicial
-      window.location.href = '/';
+      if (onSuccess) {
+        onSuccess(data);
+      }
     } catch (err) {
-      setError(err.message || 'Ocorreu um erro. Tente novamente.');
+      const errorMessage = err.message || 'Ocorreu um erro. Tente novamente.';
+      setError(errorMessage);
+      if (onError) {
+        onError(err);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleOAuthLogin = async (provider) => {
-    window.location.href = `/api/auth/${provider}`;
-  };
-
   return (
-    <div className="w-full max-w-md space-y-8">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold text-light-text-primary dark:text-dark-text-primary">
-          {isLogin ? 'Entrar' : 'Criar Conta'}
+    <div className="min-h-screen py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-light-text-primary dark:text-dark-text-primary">
+          {isLogin ? 'Entre na sua conta' : 'Crie sua conta'}
         </h2>
-        <p className="mt-2 text-light-text-secondary dark:text-dark-text-secondary">
-          {isLogin 
-            ? 'Entre para começar a jogar' 
-            : 'Crie sua conta para começar a jogar'}
-        </p>
       </div>
 
-      {/* Botões de OAuth */}
-      <div className="grid grid-cols-2 gap-4">
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={() => handleOAuthLogin('google')}
-          icon={
-            <img 
-              src="/google.svg" 
-              alt="Google" 
-              className="w-5 h-5 mr-2"
-            />
-          }
-        >
-          Google
-        </Button>
-        <Button
-          variant="secondary"
-          className="w-full"
-          onClick={() => handleOAuthLogin('github')}
-          icon={<Github className="w-5 h-5 mr-2" />}
-        >
-          GitHub
-        </Button>
-      </div>
-
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-light-text-secondary/10 dark:border-dark-text-secondary/10"></div>
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-2 bg-light-surface dark:bg-dark-surface text-light-text-secondary dark:text-dark-text-secondary">
-            Ou continue com email
-          </span>
-        </div>
-      </div>
-
-      <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-        {!isLogin && (
-          <div>
-            <label 
-              htmlFor="username" 
-              className="block text-sm font-medium text-light-text-primary dark:text-dark-text-primary"
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="grid grid-cols-2 gap-3">
+            <a
+              href={isLogin ? "/api/auth/google" : "/api/auth/google/register"}
+              className="inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-4 py-2 text-gray-500 dark:text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-offset-0"
             >
-              Nome de usuário
-            </label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              required
-              value={formData.username}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-light-surface dark:bg-dark-surface border border-light-text-secondary/10 dark:border-dark-text-secondary/10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
-              placeholder="Seu nome de usuário"
-            />
-          </div>
-        )}
+              <svg xmlns="http://www.w3.org/2000/svg" width="1.25em" height="1.25em" viewBox="0 0 24 24" className="h-5 w-5">
+                <path fill="currentColor" d="M21.456 10.154c.123.659.19 1.348.19 2.067c0 5.624-3.764 9.623-9.449 9.623A9.84 9.84 0 0 1 2.353 12a9.84 9.84 0 0 1 9.844-9.844c2.658 0 4.879.978 6.583 2.566l-2.775 2.775V7.49c-1.033-.984-2.344-1.489-3.808-1.489c-3.248 0-5.888 2.744-5.888 5.993s2.64 5.999 5.888 5.999c2.947 0 4.953-1.686 5.365-4h-5.365v-3.839z" />
+              </svg>
+              <span className="ml-2">Google</span>
+            </a>
 
-        <div>
-          <label 
-            htmlFor="email" 
-            className="block text-sm font-medium text-light-text-primary dark:text-dark-text-primary"
-          >
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            value={formData.email}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 bg-light-surface dark:bg-dark-surface border border-light-text-secondary/10 dark:border-dark-text-secondary/10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
-            placeholder="seu@email.com"
-          />
-        </div>
-
-        <div>
-          <label 
-            htmlFor="password" 
-            className="block text-sm font-medium text-light-text-primary dark:text-dark-text-primary"
-          >
-            Senha
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            value={formData.password}
-            onChange={handleChange}
-            className="mt-1 block w-full px-3 py-2 bg-light-surface dark:bg-dark-surface border border-light-text-secondary/10 dark:border-dark-text-secondary/10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
-            placeholder="********"
-          />
-        </div>
-
-        {!isLogin && (
-          <div>
-            <label 
-              htmlFor="confirmPassword" 
-              className="block text-sm font-medium text-light-text-primary dark:text-dark-text-primary"
+            <a
+              href={isLogin ? "/api/auth/github" : "/api/auth/github/register"}
+              className="inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-4 py-2 text-gray-500 dark:text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-offset-0"
             >
-              Confirmar Senha
-            </label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              required
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 bg-light-surface dark:bg-dark-surface border border-light-text-secondary/10 dark:border-dark-text-secondary/10 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
-              placeholder="********"
-            />
+              <Github className="h-5 w-5" />
+              <span className="ml-2">GitHub</span>
+            </a>
           </div>
-        )}
 
-        {error && (
-          <div className="text-error-light dark:text-error-dark text-sm">
-            {error}
+          <div className="relative mt-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white dark:bg-gray-800 px-2 text-light-text-secondary dark:text-dark-text-secondary">
+                Ou continue com email
+              </span>
+            </div>
           </div>
-        )}
 
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-full"
-          loading={loading}
-          icon={<Mail className="w-5 h-5 mr-2" />}
-        >
-          {isLogin ? 'Entrar' : 'Criar Conta'}
-        </Button>
-      </form>
+          <div className="mt-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {!isLogin && (
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Nome de usuário
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    value={formData.username}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-light-primary dark:focus:border-dark-primary focus:ring-light-primary dark:focus:ring-dark-primary sm:text-sm dark:bg-gray-700"
+                  />
+                </div>
+              )}
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-light-primary dark:focus:border-dark-primary focus:ring-light-primary dark:focus:ring-dark-primary sm:text-sm dark:bg-gray-700"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Senha
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-light-primary dark:focus:border-dark-primary focus:ring-light-primary dark:focus:ring-dark-primary sm:text-sm dark:bg-gray-700"
+                />
+              </div>
+
+              {!isLogin && (
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Confirmar senha
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-light-primary dark:focus:border-dark-primary focus:ring-light-primary dark:focus:ring-dark-primary sm:text-sm dark:bg-gray-700"
+                  />
+                </div>
+              )}
+
+              {error && (
+                <div className="text-red-600 dark:text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
+
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-light-primary dark:bg-dark-primary hover:bg-light-primary/90 dark:hover:bg-dark-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-light-primary dark:focus:ring-dark-primary disabled:opacity-50"
+                >
+                  {loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Criar conta')}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-sm text-light-primary hover:text-light-primary/90 dark:text-dark-primary dark:hover:text-dark-primary/90"
+            >
+              {isLogin ? 'Não tem uma conta? Crie agora' : 'Já tem uma conta? Entre agora'}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

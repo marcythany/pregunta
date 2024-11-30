@@ -17,27 +17,24 @@ const dropdownStyles = `
 export default function HeaderAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        console.log('Verificando autenticação...');
         const response = await fetch('/api/auth/me');
-        console.log('Status da resposta:', response.status);
-
+        
         if (response.ok) {
           const userData = await response.json();
-          console.log('Dados do usuário:', userData);
           setUser(userData);
         } else {
-          const errorData = await response.json().catch(() => ({}));
-          console.log('Erro na resposta:', response.status, errorData);
-          setError(errorData.message || 'Erro ao verificar autenticação');
+          if (response.status !== 401) {
+            console.error('Erro na verificação de autenticação:', response.status);
+          }
+          setUser(null);
         }
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
-        setError('Erro ao verificar autenticação');
+        setUser(null);
       } finally {
         setLoading(false);
       }
@@ -48,64 +45,56 @@ export default function HeaderAuth() {
 
   const handleLogout = async () => {
     try {
-      console.log('Fazendo logout...');
       const response = await fetch('/api/auth/logout', { method: 'POST' });
-      console.log('Status do logout:', response.status);
-
       if (response.ok) {
+        setUser(null);
         window.location.href = '/';
-      } else {
-        setError('Erro ao fazer logout');
       }
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
-      setError('Erro ao fazer logout');
     }
   };
 
-  if (error) {
-    return <div className="text-sm text-red-600">{error}</div>;
-  }
-
   if (loading) {
-    return <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200"></div>;
+    return <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />;
   }
 
   if (!user) {
     return (
-      <div className="flex space-x-4">
-        <a
-          href="/api/auth/github"
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Entrar com GitHub
-        </a>
-      </div>
+      <a
+        href="/auth-page"
+        className="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium bg-light-primary dark:bg-dark-primary text-white hover:bg-light-primary/90 dark:hover:bg-dark-primary/90 focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
+      >
+        Entrar / Registrar
+      </a>
     );
   }
 
   return (
-    <>
-      <style>{dropdownStyles}</style>
+    <div className="relative inline-block text-left">
       <div className="flex items-center space-x-4">
-        <span className="text-sm text-gray-700">{user.points || 0} pontos</span>
-        <div className="relative dropdown-container">
+        <span className="text-sm text-gray-700 dark:text-gray-300">
+          {user.points || 0} pontos
+        </span>
+        <div className="relative">
           <button
             type="button"
-            className="flex items-center space-x-2 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="flex items-center space-x-2 rounded-lg p-2 hover:bg-light-primary/10 dark:hover:bg-dark-primary/10 focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
           >
             <img
               src={user.avatarUrl || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'}
               alt={user.username}
               className="h-8 w-8 rounded-full"
             />
-            <span className="text-sm font-medium text-gray-700">{user.username}</span>
+            <span className="text-sm font-medium text-light-text-primary dark:text-dark-text-primary">
+              {user.username}
+            </span>
           </button>
-          <div className="absolute right-0 top-full pt-2 w-48 dropdown-menu">
-            <div className="bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 py-1">
+          <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800">
+            <div className="py-1">
               <button
                 onClick={handleLogout}
-                className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
+                className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
               >
                 Sair
               </button>
@@ -113,6 +102,6 @@ export default function HeaderAuth() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

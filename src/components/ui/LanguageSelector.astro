@@ -1,74 +1,117 @@
 ---
 import { languages } from '../../i18n/ui.js';
-import { getLanguageFromURL } from '../../i18n/useTranslations.js';
 
-const currentPath = Astro.url.pathname;
-const currentLang = getLanguageFromURL(currentPath);
+const path = Astro.url.pathname;
+const currentLang = path.split('/')[1] || 'pt-br';
 ---
 
 <div class="relative inline-block text-left">
-  <select
-    class="block w-full px-4 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white dark:bg-gray-800 dark:border-gray-700"
-    id="language-selector"
+  <button
+    type="button"
+    class="inline-flex items-center justify-center rounded-lg p-2.5 text-light-text-primary hover:bg-light-primary/10 dark:text-dark-text-primary dark:hover:bg-dark-primary/10 focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
+    id="language-menu-button"
+    aria-expanded="false"
+    aria-haspopup="true"
   >
-    {
-      Object.entries(languages).map(([lang, label]) => (
-        <option value={lang}>{label}</option>
-      ))
-    }
-  </select>
+    <span class="sr-only">Open language menu</span>
+    <span class="fi fi-{currentLang} mr-2"></span>
+    <span class="hidden sm:block">{languages[currentLang]}</span>
+  </button>
+
+  <div
+    class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-light-surface dark:bg-dark-surface shadow-lg ring-1 ring-light-primary/5 dark:ring-dark-primary/5 focus:outline-none hidden"
+    role="menu"
+    aria-orientation="vertical"
+    aria-labelledby="language-menu-button"
+    tabindex="-1"
+    id="language-menu"
+  >
+    <div class="py-1" role="none">
+      {
+        Object.entries(languages).map(([locale, label]) => (
+          <a
+            href={`/${locale}${path}`}
+            class={`block px-4 py-2 text-sm ${
+              currentLang === locale
+                ? 'bg-light-primary/10 text-light-primary dark:bg-dark-primary/10 dark:text-dark-primary'
+                : 'text-light-text-primary hover:bg-light-primary/5 dark:text-dark-text-primary dark:hover:bg-dark-primary/5'
+            }`}
+            role="menuitem"
+            tabindex="-1"
+            data-lang={locale}
+          >
+            <span class={`fi fi-${locale} mr-2`}></span>
+            {label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
 </div>
 
 <script>
-  function updateLanguageSelector() {
-    const select = document.getElementById('language-selector');
-    if (!(select instanceof HTMLSelectElement)) return;
+  function init() {
+    const button = document.getElementById('language-menu-button');
+    const menu = document.getElementById('language-menu');
+    if (!button || !menu) return;
 
-    // Determina o idioma atual da URL
-    const currentPath = window.location.pathname;
-    const langMatch = currentPath.match(/^\/(pt-br|en)/);
-    const currentLang = langMatch ? langMatch[1] : 'pt-br';
+    // Toggle menu
+    button.onclick = function() {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', (!expanded).toString());
+      menu.classList.toggle('hidden');
+    };
 
-    // Define o valor do select
-    select.value = currentLang;
+    // Close menu when clicking outside
+    document.onclick = function(e) {
+      // Garantir que o elemento clicado é um HTMLElement
+      const clickedElement = e.target;
+      if (!(clickedElement instanceof HTMLElement)) return;
+      
+      // Verificar se o clique foi fora do menu e do botão
+      if (!button.contains(clickedElement) && !menu.contains(clickedElement)) {
+        button.setAttribute('aria-expanded', 'false');
+        menu.classList.add('hidden');
+      }
+    };
 
-    select.addEventListener('change', function() {
-      const newLang = select.value;
-      
-      // Remove o prefixo de idioma atual, se existir
-      let pathWithoutLang = currentPath;
-      const langPattern = /^\/(pt-br|en)(\/|$)/;
-      if (langPattern.test(currentPath)) {
-        pathWithoutLang = currentPath.replace(langPattern, '/');
-      }
-      
-      // Remove barras duplas e barra final
-      pathWithoutLang = pathWithoutLang.replace(/\/+/g, '/').replace(/\/$/, '');
-      
-      // Se o caminho estiver vazio após a limpeza, define como '/'
-      if (!pathWithoutLang) {
-        pathWithoutLang = '/';
-      }
-      
-      // Constrói o novo caminho
-      let newPath;
-      if (newLang === 'pt-br') {
-        // Para português, usa o caminho sem prefixo
-        newPath = pathWithoutLang;
-      } else {
-        // Para outros idiomas, adiciona o prefixo
-        newPath = pathWithoutLang === '/' ? `/${newLang}` : `/${newLang}${pathWithoutLang}`;
-      }
-      
-      // Força um reload completo da página
-      window.location.replace(window.location.origin + newPath);
-    });
+    // Handle language selection
+    const links = menu.getElementsByTagName('a');
+    for (let i = 0; i < links.length; i++) {
+      const link = links[i];
+      link.onclick = function(e) {
+        e.preventDefault();
+        const newLang = link.getAttribute('data-lang');
+        const currentPath = window.location.pathname;
+        
+        // Remove o prefixo de idioma atual
+        let newPath = currentPath.replace(/^\/(pt-br|en)/, '');
+        
+        // Remove barras duplas e barra final
+        newPath = newPath.replace(/\/+/g, '/').replace(/\/$/, '');
+        
+        // Se o caminho estiver vazio, define como '/'
+        if (!newPath) {
+          newPath = '/';
+        }
+        
+        // Constrói o novo caminho
+        if (newLang === 'pt-br') {
+          newPath = newPath; // Mantém o caminho sem prefixo para português
+        } else {
+          newPath = newPath === '/' ? `/${newLang}` : `/${newLang}${newPath}`;
+        }
+        
+        // Redireciona
+        window.location.href = window.location.origin + newPath;
+      };
+    }
   }
 
-  // Executa a função quando o DOM estiver pronto
+  // Inicializa quando o DOM estiver pronto
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', updateLanguageSelector);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    updateLanguageSelector();
+    init();
   }
 </script>

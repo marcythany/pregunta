@@ -4,15 +4,15 @@ import AuthForm from '../../components/features/auth/AuthForm';
 ---
 
 <Layout title="Criar Conta - Pregunta">
-  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-light-surface dark:bg-dark-surface">
-    <div class="w-full max-w-md space-y-8">
+  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-light-background dark:bg-dark-background">
+    <div class="w-full max-w-md space-y-8 bg-light-surface dark:bg-dark-surface p-8 rounded-lg shadow-md">
       <AuthForm mode="register" client:load />
       
       <p class="mt-4 text-center text-sm text-light-text-secondary dark:text-dark-text-secondary">
         Já tem uma conta?{' '}
         <a 
           href="/login" 
-          class="font-medium text-light-primary dark:text-dark-primary hover:text-light-primary/80 dark:hover:text-dark-primary/80"
+          class="font-medium text-light-primary dark:text-dark-primary hover:text-light-primary/80 dark:hover:text-light-primary/80"
         >
           Faça login
         </a>
