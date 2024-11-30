@@ -1,4 +1,5 @@
-import { getLanguageFromURL, defaultLang } from '../i18n/ui.js';
+import { defaultLang } from '../i18n/ui.js';
+import { getLanguageFromURL, isValidLanguage } from '../i18n/utils.js';
 
 export const i18nMiddleware = (context, next) => {
   const pathname = context.url.pathname;
@@ -12,7 +13,7 @@ export const i18nMiddleware = (context, next) => {
   const lang = getLanguageFromURL(pathname);
   
   // Se o idioma não for válido, redireciona para o idioma padrão
-  if (!lang) {
+  if (!isValidLanguage(lang)) {
     return context.redirect(`/${defaultLang}${pathname}`);
   }
 
