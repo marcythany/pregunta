@@ -15,7 +15,8 @@ export const ui = {
       play: 'Jogar',
       profile: 'Perfil',
       signup: 'Cadastrar',
-      logout: 'Sair'
+      logout: 'Sair',
+      ranking: 'Ranking'
     },
     welcome: {
       title: 'Bem-vindo ao Pregunta',
@@ -42,7 +43,8 @@ export const ui = {
       play: 'Play',
       profile: 'Profile',
       signup: 'Sign Up',
-      logout: 'Logout'
+      logout: 'Logout',
+      ranking: 'Ranking'
     },
     welcome: {
       title: 'Welcome to Pregunta',
