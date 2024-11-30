@@ -119,6 +119,21 @@ export function HeaderAuth({ lang = 'pt-br' }) {
                     {user.user?.email}
                   </p>
                 </div>
+
+                <a
+                  href="/profile"
+                  className="block w-full px-4 py-2 text-left text-sm text-light-text-primary hover:bg-light-primary/5 dark:text-dark-text-primary dark:hover:bg-dark-primary/5"
+                >
+                  {lang === 'pt-br' ? 'Perfil' : 'Profile'}
+                </a>
+
+                <a
+                  href="/settings"
+                  className="block w-full px-4 py-2 text-left text-sm text-light-text-primary hover:bg-light-primary/5 dark:text-dark-text-primary dark:hover:bg-dark-primary/5"
+                >
+                  {lang === 'pt-br' ? 'Configurações' : 'Settings'}
+                </a>
+
                 <button
                   onClick={handleLogout}
                   className="block w-full px-4 py-2 text-left text-sm text-light-text-primary hover:bg-light-primary/5 dark:text-dark-text-primary dark:hover:bg-dark-primary/5"
