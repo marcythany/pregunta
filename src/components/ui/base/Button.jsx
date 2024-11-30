@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Button = (props) => {
+export function Button(props) {
   const {
     children,
     variant = 'primary',
@@ -60,5 +60,3 @@ const Button = (props) => {
     </button>
   );
 };
-
-export default Button;

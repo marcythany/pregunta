@@ -1,4 +1,4 @@
-const LoadingSpinner = ({ size = 'md', className = '' }) => {
+export function LoadingSpinner({ size = 'md', className = '' }) {
   const sizes = {
     sm: 'w-4 h-4',
     md: 'w-6 h-6',
@@ -30,5 +30,3 @@ const LoadingSpinner = ({ size = 'md', className = '' }) => {
     </div>
   );
 };
-
-export default LoadingSpinner;

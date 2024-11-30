@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
-import { userStore, logout } from '@/stores/authStore';
+import { userStore, logout } from '@stores/authStore';
 import { AuthModal } from '@features/auth/AuthModal';
+import ApiService from '@lib/api/apiService';
 
 export function HeaderAuth({ lang = 'pt-br' }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,19 +13,12 @@ export function HeaderAuth({ lang = 'pt-br' }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me');
-        
-        if (response.ok) {
-          const userData = await response.json();
-          userStore.set({ isAuthenticated: true, user: userData });
-        } else {
-          if (response.status !== 401) {
-            console.error('Erro na verificação de autenticação:', response.status);
-          }
-          userStore.set({ isAuthenticated: false, user: null });
-        }
+        const userData = await ApiService.get('auth/me');
+        userStore.set({ isAuthenticated: true, user: userData });
       } catch (error) {
-        console.error('Erro ao verificar autenticação:', error);
+        if (error.status !== 401) {
+          console.error('Erro na verificação de autenticação:', error);
+        }
         userStore.set({ isAuthenticated: false, user: null });
       }
     };
@@ -48,11 +42,9 @@ export function HeaderAuth({ lang = 'pt-br' }) {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', { method: 'POST' });
-      if (response.ok) {
-        userStore.set({ isAuthenticated: false, user: null });
-        window.location.href = '/';
-      }
+      await ApiService.post('auth/logout');
+      userStore.set({ isAuthenticated: false, user: null });
+      window.location.href = '/';
     } catch (error) {
       console.error('Erro ao fazer logout:', error);
     }

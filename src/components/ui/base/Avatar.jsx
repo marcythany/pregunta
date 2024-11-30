@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Avatar = ({ 
+export const Avatar = ({ 
   src, 
   alt, 
   size = 'md',
@@ -22,5 +22,3 @@ const Avatar = ({
     </div>
   );
 };
-
-export default Avatar;

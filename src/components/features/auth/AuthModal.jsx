@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { userStore, setUser, setToken, setPoints, setPermissions } from '@/stores/authStore';
+import { userStore, setUser, setToken, setPoints, setPermissions } from '@stores/authStore';
 import { Github } from 'lucide-react';
-import Modal from '@ui/modals/Modal';
-import Button from '@ui/base/Button';
-import Input from '@ui/base/Input';
-import LoadingSpinner from '@ui/base/LoadingSpinner';
+import { Modal } from '@ui/modals/Modal';
+import { Button } from '@ui/base/Button';
+import { Input } from '@ui/base/Input';
+import { LoadingSpinner } from '@ui/base/LoadingSpinner';
+import ApiService from '@lib/api/apiService';
 
 export function AuthModal({ isOpen, onClose, lang = 'pt-br' }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -47,34 +48,52 @@ export function AuthModal({ isOpen, onClose, lang = 'pt-br' }) {
     return true;
   };
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setError('');
 
     if (!validateForm()) return;
 
-    setLoading(true);
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+      const data = await ApiService.post('auth/login', {
+        email: formData.email,
+        password: formData.password
+      });
+      
+      setUser(data.user);
+      setToken(data.accessToken);
+      setPoints(data.user.points || 0);
+      setPermissions(data.user.permissions || []);
+      onClose();
+    } catch (error) {
+      setError(error.message || 'Erro ao fazer login');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    if (!validateForm()) return;
+
+    try {
+      const data = await ApiService.post('auth/register', {
+        name: formData.username,
+        email: formData.email,
+        password: formData.password
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erro ao processar requisição');
-      }
-
       setUser(data.user);
-      setToken(data.token);
-      setPoints(data.points || 0);
-      setPermissions(data.permissions || []);
+      setToken(data.accessToken);
+      setPoints(data.user.points || 0);
+      setPermissions(data.user.permissions || []);
       onClose();
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setError(error.message || 'Erro ao criar conta');
     } finally {
       setLoading(false);
     }
@@ -99,7 +118,7 @@ export function AuthModal({ isOpen, onClose, lang = 'pt-br' }) {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
           {!isLogin && (
             <Input
               type="text"
