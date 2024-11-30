@@ -9,7 +9,8 @@ export async function GET({ request }) {
     const auth = await authMiddleware(request);
     if (auth instanceof Response) return auth;
 
-    await DbService.connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
     const user = await User.findOne({ _id: auth.userId });
 
     if (!user) {
@@ -61,7 +62,8 @@ export async function PUT({ request }) {
       );
     }
 
-    await DbService.connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
     const updatedUser = await User.findOneAndUpdate(
       { _id: auth.userId },
       { $set: filteredSettings },
@@ -106,7 +108,8 @@ export async function POST({ request }) {
       );
     }
 
-    await DbService.connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
     const user = await User.findOne({ _id: auth.userId });
 
     if (!user) {

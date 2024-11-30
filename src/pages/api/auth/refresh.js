@@ -27,7 +27,8 @@ export async function POST({ request }) {
       );
     }
 
-    await DbService.connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
 
     // Verificar se o refresh token existe no banco
     const user = await User.findOne({ refreshToken });

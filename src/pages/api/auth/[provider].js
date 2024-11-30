@@ -1,6 +1,6 @@
-import { connectToDb } from '../../../utils/db';
-import { User } from '../../../models/user';
-import { AuthService } from '../../../lib/auth/authService';
+import DbService from '@/lib/db/dbService';
+import { AuthService } from '@/lib/auth/authService';
+import { createUserProfile } from '@/models/user';
 
 const providers = {
   google: {

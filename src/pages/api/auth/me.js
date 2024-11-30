@@ -32,7 +32,7 @@ export const GET = async ({ request }) => {
     }
 
     // Buscar usuário atualizado do banco
-    const db = await DbService.connectToDb();
+    const db = await DbService.getInstance();
     const user = await db.collection('users').findOne(
       { _id: new ObjectId(decoded.id) },
       { projection: { password: 0 } }

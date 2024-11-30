@@ -19,7 +19,8 @@ export async function post({ request }) {
       );
     }
 
-    await DbService.connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
 
     // Buscar usuário
     const user = await User.findOne({ email });

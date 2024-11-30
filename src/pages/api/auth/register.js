@@ -19,7 +19,8 @@ export async function post({ request }) {
       );
     }
 
-    await DbService.connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
 
     // Verificar se o usuário já existe
     const existingUser = await User.findOne({ 

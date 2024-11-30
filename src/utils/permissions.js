@@ -1,4 +1,4 @@
-import { connectToDb } from './db';
+import DbService from '@/lib/db/dbService';
 
 // Pontuação mínima necessária para diferentes ações
 export const PERMISSION_THRESHOLDS = {
@@ -23,7 +23,7 @@ export const POINTS_REWARDS = {
 // Verifica se o usuário tem pontuação suficiente para uma ação específica
 export async function checkPermission(userId, action) {
   try {
-    const db = await connectToDb();
+    const db = await DbService.getInstance();
     const usersCollection = db.collection('users');
 
     const user = await usersCollection.findOne(
@@ -52,7 +52,7 @@ export async function checkPermission(userId, action) {
 // Atualiza a pontuação do usuário
 export async function updateUserPoints(userId, action) {
   try {
-    const db = await connectToDb();
+    const db = await DbService.getInstance();
     const usersCollection = db.collection('users');
 
     const pointsToAdd = POINTS_REWARDS[action] || 0;

@@ -80,7 +80,7 @@ export const GET = async ({ params, url, redirect }) => {
     }
 
     // Conectar ao banco de dados
-    const db = await DbService.connectToDb();
+    const db = await DbService.getInstance();
     const usersCollection = db.collection('users');
 
     // Procurar usuário existente
