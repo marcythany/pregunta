@@ -1,6 +1,6 @@
-import { connectToDb } from '../../../utils/db';
-import { User } from '../../../models/user';
-import { AuthService } from '../../../lib/auth/authService';
+import DbService from '@/lib/db/dbService';
+import { User } from '@/models/user';
+import { AuthService } from '@/lib/auth/authService';
 
 export async function post({ request }) {
   try {
@@ -19,7 +19,7 @@ export async function post({ request }) {
       );
     }
 
-    await connectToDb();
+    await DbService.connectToDb();
 
     // Verificar se o usuário já existe
     const existingUser = await User.findOne({ 

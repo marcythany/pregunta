@@ -1,4 +1,4 @@
-import { connectToDb } from '@/utils/db';
+import DbService from '@/lib/db/dbService';
 import { AuthService } from '@/lib/auth/authService';
 
 const providers = {
@@ -80,7 +80,7 @@ export const GET = async ({ params, url, redirect }) => {
     }
 
     // Conectar ao banco de dados
-    const db = await connectToDb();
+    const db = await DbService.connectToDb();
     const usersCollection = db.collection('users');
 
     // Procurar usuário existente

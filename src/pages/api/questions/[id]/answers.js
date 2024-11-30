@@ -1,5 +1,5 @@
-import { authMiddleware } from '../../../../utils/auth';
-import { connectToDb } from '../../../../utils/db';
+import { authMiddleware } from '@middleware/auth';
+import DbService from '@lib/db/dbService';
 import { ObjectId } from 'mongodb';
 
 // GET: Listar respostas de uma pergunta
@@ -21,9 +21,9 @@ export async function GET({ request, params }) {
     const limit = parseInt(url.searchParams.get('limit')) || 10;
     const sort = url.searchParams.get('sort') || 'votes'; // votes ou date
 
-    await connectToDb();
-    const db = await connectToDb();
-    const answersCollection = db.collection('answers');
+    const dbService = new DbService();
+    await dbService.connect();
+    const answersCollection = dbService.collection('answers');
 
     // Construir query
     const query = { questionId: id };
@@ -87,10 +87,10 @@ export async function POST({ request, params }) {
       );
     }
 
-    await connectToDb();
-    const db = await connectToDb();
-    const answersCollection = db.collection('answers');
-    const questionsCollection = db.collection('questions');
+    const dbService = new DbService();
+    await dbService.connect();
+    const answersCollection = dbService.collection('answers');
+    const questionsCollection = dbService.collection('questions');
 
     // Verifica se a pergunta existe
     const question = await questionsCollection.findOne({ 

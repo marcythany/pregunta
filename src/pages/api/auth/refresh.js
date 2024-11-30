@@ -1,6 +1,6 @@
-import { connectToDb } from '../../../utils/db';
-import { AuthService } from '../../../lib/auth/authService';
-import { User } from '../../../models/user';
+import DbService from '@/lib/db/dbService';
+import { AuthService } from '@/lib/auth/authService';
+import { User } from '@/models/user';
 
 export async function POST({ request }) {
   try {
@@ -27,7 +27,7 @@ export async function POST({ request }) {
       );
     }
 
-    await connectToDb();
+    await DbService.connectToDb();
 
     // Verificar se o refresh token existe no banco
     const user = await User.findOne({ refreshToken });

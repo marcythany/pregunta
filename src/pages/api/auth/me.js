@@ -1,5 +1,5 @@
-import { AuthService } from '../../../lib/auth/authService';
-import { connectToDb } from '../../../utils/db';
+import { AuthService } from '@/lib/auth/authService';
+import DbService from '@/lib/db/dbService';
 import { ObjectId } from 'mongodb';
 
 export const GET = async ({ request }) => {
@@ -32,7 +32,7 @@ export const GET = async ({ request }) => {
     }
 
     // Buscar usuário atualizado do banco
-    const db = await connectToDb();
+    const db = await DbService.connectToDb();
     const user = await db.collection('users').findOne(
       { _id: new ObjectId(decoded.id) },
       { projection: { password: 0 } }

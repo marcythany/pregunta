@@ -1,6 +1,6 @@
-import { authMiddleware } from '../../../utils/auth';
-import { connectToDb } from '../../../utils/db';
-import { User } from '../../../models/user';
+import { authMiddleware } from '@middleware/auth';
+import DbService from '@lib/db/dbService';
+import { User } from '@models/user';
 
 // GET: Obter perfil do usuário
 export async function GET({ request }) {
@@ -8,7 +8,7 @@ export async function GET({ request }) {
     const auth = await authMiddleware(request);
     if (auth instanceof Response) return auth; // Retorna erro se não autenticado
     
-    await connectToDb();
+    await DbService.connectToDb();
     const user = await User.findOne({ _id: auth.userId });
     
     if (!user) {
@@ -54,7 +54,7 @@ export async function PUT({ request }) {
       );
     }
 
-    await connectToDb();
+    await DbService.connectToDb();
     
     // Verifica se o email já está em uso (se estiver sendo atualizado)
     if (filteredData.email) {

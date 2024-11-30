@@ -1,6 +1,6 @@
-import { authMiddleware } from '../../../utils/auth';
-import { connectToDb } from '../../../utils/db';
-import { User } from '../../../models/user';
+import { authMiddleware } from '@middleware/auth';
+import DbService from '@lib/db/dbService';
+import { User } from '@models/user';
 import bcrypt from 'bcryptjs';
 
 // GET: Obter configurações do usuário
@@ -9,7 +9,7 @@ export async function GET({ request }) {
     const auth = await authMiddleware(request);
     if (auth instanceof Response) return auth;
 
-    await connectToDb();
+    await DbService.connectToDb();
     const user = await User.findOne({ _id: auth.userId });
 
     if (!user) {
@@ -61,7 +61,7 @@ export async function PUT({ request }) {
       );
     }
 
-    await connectToDb();
+    await DbService.connectToDb();
     const updatedUser = await User.findOneAndUpdate(
       { _id: auth.userId },
       { $set: filteredSettings },
@@ -106,7 +106,7 @@ export async function POST({ request }) {
       );
     }
 
-    await connectToDb();
+    await DbService.connectToDb();
     const user = await User.findOne({ _id: auth.userId });
 
     if (!user) {
