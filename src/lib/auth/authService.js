@@ -34,7 +34,31 @@ export class AuthService {
     try {
       return jwt.verify(token, JWT_SECRET);
     } catch (error) {
-      return null;
+      throw new Error('Token inválido');
+    }
+  }
+
+  static verifyAuthHeader(authHeader) {
+    if (!authHeader?.startsWith('Bearer ')) {
+      throw new Error('Token não fornecido');
+    }
+    const token = authHeader.split(' ')[1];
+    return this.verifyToken(token);
+  }
+
+  static async authMiddleware(request) {
+    try {
+      const authHeader = request.headers.get('Authorization');
+      const user = this.verifyAuthHeader(authHeader);
+      return user;
+    } catch (error) {
+      return new Response(
+        JSON.stringify({ message: error.message || 'Não autorizado' }),
+        { 
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
   }
 
@@ -53,5 +77,10 @@ export class AuthService {
     if (points >= 500) return 'advanced';
     if (points >= 100) return 'intermediate';
     return 'beginner';
+  }
+
+  static checkPermission(user, permission) {
+    if (!user || !user.permissions) return false;
+    return user.permissions.includes(permission);
   }
 }
