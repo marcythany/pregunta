@@ -1,7 +1,100 @@
 ---
-import { getRelativeLocaleUrl } from 'astro:i18n';
+import Layout from '../layouts/Layout.astro';
+import { useTranslations } from '../i18n/useTranslations.js';
+import Button from '../components/common/Button.jsx';
+import Card from '../components/common/Card.jsx';
+import Avatar from '../components/common/Avatar.jsx';
 
-const defaultLocaleUrl = getRelativeLocaleUrl('pt-br', '');
-return Astro.redirect(defaultLocaleUrl);
+const lang = 'pt-br';
+const t = useTranslations(lang);
+
+// URLs em português sempre na raiz
+const localizedUrl = (path) => path.startsWith('/') ? path : `/${path}`;
 ---
 
+<Layout title={t('welcome.title')}>
+  <!-- Hero Section -->
+  <section class="relative h-[500px] w-full bg-gradient-to-br from-light-primary/20 to-light-secondary/20 dark:from-dark-primary/20 dark:to-dark-secondary/20 flex items-center justify-center overflow-hidden">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0">
+      <img 
+        src="https://picsum.photos/seed/pregunta-hero/1920/1080" 
+        alt="Hero Background" 
+        class="w-full h-full object-cover opacity-30"
+      />
+    </div>
+    <div class="relative text-center space-y-6 max-w-4xl px-4">
+      <h1 class="text-5xl font-bold text-light-text-primary dark:text-dark-text-primary">{t('welcome.title')}</h1>
+      <p class="text-xl text-light-text-secondary dark:text-dark-text-secondary">{t('welcome.description')}</p>
+      <Button
+        variant="primary"
+        className="inline-block"
+        onClick={() => {}}
+        client:load
+      >
+        {t('nav.play')}
+      </Button>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section class="py-16 px-4 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold mb-8 text-light-text-primary dark:text-dark-text-primary">{t('categories.title')}</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {[
+        { name: 'Praia', seed: 'beach', path: '/categories/beach' },
+        { name: 'Aventura na Montanha', seed: 'mountain', path: '/categories/mountain' },
+        { name: 'Luzes da Cidade', seed: 'city', path: '/categories/city' },
+        { name: 'Refúgio na Floresta', seed: 'forest', path: '/categories/forest' },
+        { name: 'Festival de Música', seed: 'music', path: '/categories/music' },
+        { name: 'Tour Histórico', seed: 'history', path: '/categories/history' },
+        { name: 'Mercado Local', seed: 'market', path: '/categories/market' },
+        { name: 'Retiro ao Lago', seed: 'lake', path: '/categories/lake' }
+      ].map((category) => (
+        <Card className="group relative p-0 overflow-hidden hover:scale-[1.02] transition-all duration-300">
+          <a href={localizedUrl(category.path)} class="block">
+            <img
+              src={`https://picsum.photos/seed/${category.seed}/400/300`}
+              alt={category.name}
+              class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+              <div class="absolute bottom-0 p-4">
+                <h3 class="text-xl font-semibold text-white">{category.name}</h3>
+              </div>
+            </div>
+          </a>
+        </Card>
+      ))}
+    </div>
+  </section>
+
+  <!-- Top Players Section -->
+  <section class="py-16 px-4 max-w-7xl mx-auto">
+    <h2 class="text-3xl font-bold mb-8 text-light-text-primary dark:text-dark-text-primary">{t('ranking.title')}</h2>
+    <div class="grid md:grid-cols-2 gap-8">
+      {[
+        { name: 'Alex J.', username: '@starplayer', score: '9500', seed: 'alex' },
+        { name: 'Jamie L.', username: '@gamerpro', score: '9400', seed: 'jamie' },
+        { name: 'Sam T.', username: '@highscore', score: '9300', seed: 'sam' },
+        { name: 'Chris M.', username: '@champion', score: '9200', seed: 'chris' }
+      ].map((player) => (
+        <Card className="hover:scale-[1.02] transition-all duration-300">
+          <a href={localizedUrl(`/profile/${player.username}`)} class="flex items-center space-x-4">
+            <Avatar
+              src={`https://picsum.photos/seed/${player.seed}/100/100`}
+              alt={player.name}
+              size="lg"
+              client:load
+            />
+            <div class="flex-1">
+              <h3 class="font-semibold text-light-text-primary dark:text-dark-text-primary">{player.name}</h3>
+              <p class="text-sm text-light-text-secondary dark:text-dark-text-secondary">{player.username}</p>
+              <p class="text-sm text-light-text-primary dark:text-dark-text-primary">Pontuação: {player.score} - Melhor Pontuação</p>
+            </div>
+          </a>
+        </Card>
+      ))}
+    </div>
+  </section>
+</Layout>

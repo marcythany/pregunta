@@ -32,24 +32,24 @@ export function QuestionCard({ question }) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-gray-700/20 p-6 mb-4 transition-colors">
+    <div className="bg-light-surface dark:bg-dark-surface rounded-lg shadow-md hover:shadow-lg border border-light-text-secondary/10 dark:border-dark-text-secondary/10 p-6 mb-4 transition-all duration-300">
       <div className="flex items-start space-x-4">
         {/* Votos */}
         <div className="flex flex-col items-center space-y-2">
           <button
             onClick={() => handleVote('up')}
-            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+            className="p-1 rounded hover:bg-light-background dark:hover:bg-dark-background transition-colors group"
             title="Votar positivamente"
           >
-            <ThumbsUp className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400" />
+            <ThumbsUp className="h-5 w-5 text-light-text-secondary dark:text-dark-text-secondary group-hover:text-light-primary dark:group-hover:text-dark-primary" />
           </button>
-          <span className="font-medium text-gray-700 dark:text-gray-300">{question.votes}</span>
+          <span className="font-medium text-light-text-primary dark:text-dark-text-primary">{question.votes}</span>
           <button
             onClick={() => handleVote('down')}
-            className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+            className="p-1 rounded hover:bg-light-background dark:hover:bg-dark-background transition-colors group"
             title="Votar negativamente"
           >
-            <ThumbsDown className="h-5 w-5 text-gray-500 dark:text-gray-400 group-hover:text-red-600 dark:group-hover:text-red-400" />
+            <ThumbsDown className="h-5 w-5 text-light-text-secondary dark:text-dark-text-secondary group-hover:text-error-light dark:group-hover:text-error-dark" />
           </button>
         </div>
 
@@ -58,13 +58,13 @@ export function QuestionCard({ question }) {
           <h2 className="text-xl font-semibold mb-2">
             <a 
               href={`/questions/${question._id}`} 
-              className="text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+              className="text-light-text-primary dark:text-dark-text-primary hover:text-light-primary dark:hover:text-dark-primary transition-colors"
             >
               {question.title}
             </a>
           </h2>
           
-          <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
+          <p className="text-light-text-secondary dark:text-dark-text-secondary mb-4 line-clamp-3">
             {question.content}
           </p>
 
@@ -72,14 +72,14 @@ export function QuestionCard({ question }) {
             {question.tags?.map(tag => (
               <span
                 key={tag}
-                className="px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-sm text-gray-600 dark:text-gray-300 transition-colors"
+                className="px-2 py-1 rounded-full bg-light-background dark:bg-dark-background text-sm text-light-text-secondary dark:text-dark-text-secondary transition-colors"
               >
                 {tag}
               </span>
             ))}
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-between text-sm text-light-text-secondary dark:text-dark-text-secondary">
             <div className="flex items-center space-x-4">
               <span>{new Date(question.createdAt).toLocaleDateString()}</span>
               <span className="flex items-center">
@@ -93,9 +93,9 @@ export function QuestionCard({ question }) {
               <img
                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(question.author)}&background=random`}
                 alt={question.author}
-                className="w-6 h-6 rounded-full ring-2 ring-gray-200 dark:ring-gray-700"
+                className="w-6 h-6 rounded-full ring-2 ring-light-text-secondary/20 dark:ring-dark-text-secondary/20"
               />
-              <span className="text-gray-700 dark:text-gray-300">{question.author}</span>
+              <span className="text-light-text-primary dark:text-dark-text-primary">{question.author}</span>
             </div>
           </div>
         </div>
