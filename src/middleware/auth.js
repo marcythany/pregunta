@@ -1,4 +1,4 @@
-import { AuthService } from '../lib/auth/authService';
+import { AuthService } from '@/lib/auth/authService';
 
 export async function authMiddleware(context) {
   const authHeader = context.request.headers.get('Authorization');

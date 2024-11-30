@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import { useStore } from '@nanostores/react';
-import { userStore, setUser, setToken } from '../stores/authStore';
+import { useStore } from '@/nanostores/react';
+import { userStore, setUser, setToken } from '@/stores/authStore';
 
 const API_URL = import.meta.env.PUBLIC_API_URL;
 

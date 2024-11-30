@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useStore } from '@nanostores/react';
-import { userStore, logout } from '../../stores/authStore';
+import React from 'react';
+import { useStore } from '@/nanostores/react';
+import { userStore, logout } from '@/stores/authStore';
 import { Menu } from 'lucide-react';
 
 export function UserMenu() {

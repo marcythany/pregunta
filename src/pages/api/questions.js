@@ -1,4 +1,4 @@
-import { getQuestions, createQuestion, getQuestionById, updateQuestion, deleteQuestion } from '../../models/Question.js';
+import { getQuestions, createQuestion, getQuestionById, updateQuestion, deleteQuestion } from '@/models/Question.js';
 
 export async function GET({ request }) {
     try {

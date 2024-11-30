@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useStore } from '@nanostores/react';
-import { userStore, setUser, setToken, setPoints, setPermissions } from '../../stores/authStore';
+import { useStore } from '@/nanostores/react';
+import { userStore, setUser, setToken, setPoints, setPermissions } from '@/stores/authStore';
 
 export function AuthModal({ isOpen, onClose }) {
   const [isLogin, setIsLogin] = useState(true);

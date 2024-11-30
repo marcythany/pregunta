@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useStore } from '@/nanostores/react';
+import { userStore, setUser, setToken, setPoints, setPermissions } from '@/stores/authStore';
 import { Github } from 'lucide-react';
 
 export default function AuthForm({ mode = 'login', onSuccess = () => {}, onError = () => {} }) {

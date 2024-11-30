@@ -1,6 +1,6 @@
 import React from 'react';
-import { useStore } from '@nanostores/react';
-import { userStore } from '../../stores/authStore';
+import { useStore } from '@/nanostores/react';
+import { userStore } from '@/stores/authStore';
 import { ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
 
 export function QuestionCard({ question }) {

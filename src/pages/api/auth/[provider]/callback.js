@@ -1,5 +1,5 @@
-import { connectToDb } from '../../../../utils/db';
-import { AuthService } from '../../../../lib/auth/authService';
+import { connectToDb } from '@/utils/db';
+import { AuthService } from '@/lib/auth/authService';
 
 const providers = {
   github: {

@@ -1,131 +1,132 @@
-# Pregunta Project Structure
+# Estrutura do Projeto Pregunta
 
-This document outlines the organization of the Pregunta project, following best practices for Astro.js with JavaScript, React, and TailwindCSS.
+Este documento descreve a organização do projeto Pregunta, construído com Astro.js SSR, JavaScript, React e TailwindCSS.
 
 ```
 src/
-├── components/           # Reusable components
-│   ├── common/          # Basic UI components used across the app
-│   │   ├── Button.jsx
-│   │   ├── Card.jsx
-│   │   ├── Avatar.jsx
-│   │   └── ...
-│   ├── layout/          # Layout-specific components
-│   │   ├── Header.astro
-│   │   ├── Footer.astro
-│   │   └── Navigation.astro
-│   ├── features/        # Feature-specific components
-│   │   ├── auth/        # Authentication related components
-│   │   │   ├── LoginForm.jsx
-│   │   │   └── AuthModal.jsx
-│   │   ├── game/        # Game-specific components
-│   │   │   ├── GameBoard.jsx
-│   │   │   └── ScoreCard.jsx
-│   │   └── questions/   # Question-related components
-│   │       ├── QuestionCard.jsx
-│   │       └── QuestionList.jsx
-│   └── ui/             # Shared UI components with specific styling
-│       ├── icons/      # SVG icons and icon components
-│       ├── forms/      # Form-specific components
-│       └── modals/     # Modal components
+├── assets/            # Recursos estáticos (imagens, fontes)
+│   ├── images/
+│   └── fonts/
 │
-├── layouts/            # Page layouts
-│   ├── Layout.astro    # Main layout
-│   ├── GameLayout.astro # Game-specific layout
-│   └── AuthLayout.astro # Auth pages layout
+├── components/        # Componentes reutilizáveis
+│   ├── common/       # Componentes UI básicos usados em todo o app
+│   ├── layout/       # Componentes específicos de layout
+│   ├── features/     # Componentes específicos de funcionalidades
+│   └── ui/          # Componentes UI compartilhados com estilização específica
 │
-├── pages/              # Route pages
-│   ├── index.astro
-│   ├── game/
-│   ├── auth/
-│   └── categories/
+├── constants/        # Constantes e configurações
+│   ├── routes.js    # Definições de rotas
+│   └── config.js    # Configuração do aplicativo
 │
-├── stores/             # State management
-│   ├── gameStore.js
-│   └── authStore.js
+├── hooks/           # Hooks personalizados do React
 │
-├── utils/              # Utility functions and helpers
-│   ├── api.js         # API utilities
-│   ├── auth.js        # Authentication utilities
-│   └── helpers.js     # General helper functions
+├── i18n/           # Internacionalização
+│   ├── translations/
+│   └── config/
 │
-├── i18n/              # Internationalization
-│   ├── translations/  # Translation files
-│   └── useTranslations.js
+├── layouts/         # Layouts Astro
+│   ├── Layout.astro # Layout principal
+│   └── Auth.astro   # Layout específico de autenticação
 │
-├── constants/         # Constants and configuration
-│   ├── routes.js     # Route definitions
-│   └── config.js     # App configuration
+├── lib/            # Configurações de bibliotecas de terceiros
 │
-└── assets/           # Static assets
-    ├── images/
-    └── fonts/
+├── middleware/     # Middleware SSR e manipuladores de rotas API
+│
+├── models/         # Modelos de dados e tipos
+│
+├── pages/          # Páginas de rotas (Astro e React)
+│   ├── api/       # Endpoints da API
+│   └── [...rest]  # Rotas da aplicação
+│
+├── stores/         # Gerenciamento de estado
+│
+├── styles/         # Estilos globais e configurações do Tailwind
+│
+└── utils/          # Funções utilitárias e auxiliares
+    ├── api.js     # Utilitários da API
+    ├── auth.js    # Utilitários de autenticação
+    └── helpers.js # Funções auxiliares gerais
 ```
 
-## Key Organization Principles
+## Princípios Fundamentais de Organização
 
-1. **Component Organization**
-   - `common/`: Basic reusable components
-   - `features/`: Feature-specific components grouped by domain
-   - `layout/`: Layout components using Astro
-   - `ui/`: Shared UI components with specific styling
+1. **Específico do Astro.js SSR**
+   - Use arquivos `.astro` para páginas que não precisam de interatividade no lado do cliente
+   - Implemente as diretivas `client:load`, `client:visible` ou `client:idle` apropriadamente
+   - Utilize o middleware integrado do Astro para funcionalidade SSR
+   - Mantenha rotas API em `pages/api` para operações do lado do servidor
 
-2. **State Management**
-   - Keep stores simple and focused
-   - Use React's Context API for component-level state
-   - Store files should be JavaScript files
+2. **Organização de Componentes**
+   - `common/`: Componentes básicos reutilizáveis
+   - `features/`: Componentes específicos de funcionalidades agrupados por domínio
+   - `layout/`: Componentes de layout usando Astro
+   - `ui/`: Componentes UI compartilhados com estilização específica
 
-3. **Styling with TailwindCSS**
-   - Use Tailwind classes directly in components
-   - Avoid CSS modules or separate CSS files
-   - Create reusable Tailwind component classes in components when needed
+3. **Gerenciamento de Estado**
+   - Use o estado do lado do servidor do Astro quando possível
+   - Implemente Context API do React para estado do lado do cliente
+   - Mantenha as stores simples e focadas em domínios específicos
 
-4. **File Naming Conventions**
-   - React components: PascalCase (e.g., `Button.jsx`)
-   - Astro components: PascalCase (e.g., `Header.astro`)
-   - Utility files: camelCase (e.g., `helpers.js`)
-   - Test files: ComponentName.test.jsx
+4. **Estilização com TailwindCSS**
+   - Use classes Tailwind diretamente nos componentes
+   - Crie classes utilitárias reutilizáveis em `styles/`
+   - Mantenha tokens de design consistentes em `tailwind.config.mjs`
+   - Implemente designs responsivos usando breakpoints do Tailwind
 
-5. **Import Organization**
-   - Group imports in the following order:
-     1. React/Framework imports
-     2. Third-party libraries
-     3. Components
-     4. Utilities/Helpers
-     5. Assets
+5. **Nomenclatura e Organização de Arquivos**
+   - Páginas Astro: `page.astro`
+   - Componentes React: `ComponentName.jsx`
+   - Rotas API: `route.js` ou `api.js`
+   - Utilitários: `camelCase.js`
+   - Testes: `ComponentName.test.jsx`
 
-6. **Code Splitting**
-   - Use dynamic imports for large features
-   - Leverage Astro's built-in code splitting
-   - Keep components focused and single-responsibility
+6. **Otimização de Performance**
+   - Implemente estratégias adequadas de hidratação parcial
+   - Use otimização de imagens do Astro
+   - Implemente transições de visualização
+   - Utilize estratégias adequadas de cache
+   - Otimize tamanhos de bundle com code splitting
 
-7. **Performance Considerations**
-   - Lazy load components when possible
-   - Use client:load only when necessary
-   - Optimize images using Astro's image components
+## Melhores Práticas
 
-## Best Practices
+1. **Astro.js SSR**
+   - Mantenha páginas o mais estáticas possível
+   - Use renderização do lado do servidor para conteúdo dinâmico
+   - Implemente limites de erro adequados
+   - Trate estados de carregamento apropriadamente
+   - Use recursos de SEO integrados do Astro
 
-1. **Components**
-   - Keep components small and focused
-   - Use composition over inheritance
-   - Implement proper prop validation
-   - Use meaningful component and prop names
+2. **Componentes**
+   - Prefira componentes `.astro` para conteúdo estático
+   - Use componentes React para elementos interativos
+   - Implemente tipos TypeScript adequados
+   - Siga o princípio da responsabilidade única
+   - Use validação adequada de props
 
-2. **JavaScript**
-   - Use modern JavaScript features
-   - Implement proper error handling
-   - Use async/await for asynchronous operations
-   - Keep business logic in separate utility files
+3. **Manipulação de Dados**
+   - Implemente estratégias adequadas de busca de dados
+   - Use busca de dados do lado do servidor do Astro quando possível
+   - Trate erros graciosamente
+   - Implemente estados de carregamento adequados
+   - Cache dados apropriadamente
 
-3. **TailwindCSS**
-   - Use @apply for complex, repeated styles
-   - Maintain consistent spacing and color usage
-   - Utilize Tailwind's configuration for custom values
-   - Keep responsive designs mobile-first
+4. **Segurança**
+   - Implemente políticas CORS adequadas
+   - Valide entrada do usuário
+   - Use variáveis de ambiente para dados sensíveis
+   - Implemente fluxos de autenticação adequados
+   - Siga as melhores práticas de segurança para SSR
 
-4. **Performance**
-   - Implement proper loading states
-   - Use proper caching strategies
-   - Optimize assets and bundle sizes
-   - Monitor and optimize component re-renders
+5. **Fluxo de Desenvolvimento**
+   - Siga padrões de codificação consistentes
+   - Escreva mensagens de commit significativas
+   - Documente lógica complexa
+   - Escreva testes para funcionalidades críticas
+   - Revise mudanças de código minuciosamente
+
+6. **Implantação**
+   - Use otimização adequada de build
+   - Implemente pipelines de CI/CD
+   - Monitore métricas de performance
+   - Use logging adequado
+   - Implemente estratégias adequadas de backup

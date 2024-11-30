@@ -1,9 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { useTranslations } from '../i18n/useTranslations.js';
-import Button from '../components/ui/base/Button';
-import Card from '../components/common/Card.jsx';
-import Avatar from '../components/common/Avatar.jsx';
+import Layout from '@layouts/Layout.astro';
+import { useTranslations } from '@/i18n/useTranslations.js';
+import Button from '@ui/base/Button';
+import Card from '@ui/base/Card.jsx';
+import Avatar from '@ui/base/Avatar.jsx';
 
 const lang = 'pt-br';
 const t = useTranslations(lang);
@@ -17,7 +17,7 @@ const localizedUrl = (path) => path.startsWith('/') ? path : `/${path}`;
   <section class="relative h-[500px] w-full bg-gradient-to-br from-light-primary/10 to-light-secondary/10 dark:from-dark-primary/10 dark:to-dark-secondary/10 flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0">
       <img 
-        src="/images/hero-background.webp" 
+        src="https://picsum.photos/seed/pregunta-hero/1920/1080" 
         alt="Background" 
         class="w-full h-full object-cover opacity-30"
       />

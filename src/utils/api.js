@@ -1,4 +1,4 @@
-import { addToast } from '../components/ui/Toast';
+import { addToast } from '@/components/ui/Toast';
 
 const API_URL = import.meta.env.PUBLIC_API_URL || '';
 
