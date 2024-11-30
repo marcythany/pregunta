@@ -19,7 +19,17 @@ export default defineConfig({
       prefixDefaultLocale: false
     },
     fallback: {
-      en: "pt-br"
+      "en": "pt-br"
     }
+  },
+  vite: {
+    envDir: './',
+    envPrefix: [
+      'PUBLIC_',
+      'MONGODB_',
+      'GITHUB_',
+      'GOOGLE_',
+      'JWT_',
+    ]
   }
 });

@@ -2,6 +2,7 @@
 import { useTranslations } from '../../i18n/useTranslations';
 import LanguageSelector from '../ui/LanguageSelector.astro';
 import ThemeToggle from '../ui/ThemeToggle.astro';
+import HeaderAuth from './HeaderAuth';
 
 const { lang = 'pt-br' } = Astro.params;
 const t = useTranslations(lang);
@@ -21,77 +22,52 @@ const localizedUrl = (path) => lang === 'pt-br' ? path : `/${lang}${path}`;
         </a>
       </div>
 
-      <!-- Navegação Principal - Desktop -->
-      <nav class="hidden md:flex items-center space-x-4">
-        <a 
+      <!-- Menu Desktop -->
+      <nav class="hidden md:flex space-x-8">
+        <a
           href={localizedUrl('/play')}
-          class="px-3 py-2 rounded-md text-sm font-medium text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-primary-hover transition-all"
+          class="text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent transition-colors"
         >
           {t('nav.play')}
         </a>
-        <a 
-          href={localizedUrl('/categories')}
-          class="px-3 py-2 rounded-md text-sm font-medium text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-primary-hover transition-all"
-        >
-          {t('nav.categories')}
-        </a>
-        <a 
+        <a
           href={localizedUrl('/ranking')}
-          class="px-3 py-2 rounded-md text-sm font-medium text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-primary-hover transition-all"
+          class="text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent transition-colors"
         >
           {t('nav.ranking')}
         </a>
+        <a
+          href={localizedUrl('/about')}
+          class="text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent transition-colors"
+        >
+          {t('nav.about')}
+        </a>
       </nav>
 
-      <!-- Ações do Usuário -->
+      <!-- Botões da direita -->
       <div class="flex items-center space-x-4">
-        <!-- Language Selector -->
-        <div class="hidden sm:block">
-          <LanguageSelector />
-        </div>
-
-        <!-- Theme Toggle -->
+        <HeaderAuth client:load />
+        <LanguageSelector />
         <ThemeToggle />
-
-        <!-- Botões de Login/Registro -->
-        <div class="hidden md:flex items-center space-x-2">
-          <a
-            href={localizedUrl('/login')}
-            class="px-4 py-2 text-sm font-medium text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent transition-colors"
-          >
-            {t('nav.login')}
-          </a>
-          <a
-            href={localizedUrl('/register')}
-            class="px-4 py-2 text-sm font-medium text-light-text-primary bg-light-primary hover:bg-light-primary/90 dark:bg-dark-primary dark:text-dark-text-primary dark:hover:bg-dark-primary/90 rounded-md transition-colors"
-          >
-            {t('nav.register')}
-          </a>
-        </div>
-
-        <!-- Menu Mobile -->
+        
+        <!-- Botão do menu mobile -->
         <button
           type="button"
-          class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-light-text-secondary hover:text-light-text-primary hover:bg-light-background dark:text-dark-text-secondary dark:hover:text-dark-text-primary dark:hover:bg-dark-background transition-colors"
+          id="mobile-menu-button"
+          class="md:hidden inline-flex items-center justify-center p-2 rounded-md text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent focus:outline-none"
           aria-controls="mobile-menu"
           aria-expanded="false"
-          id="mobile-menu-button"
         >
           <span class="sr-only">Abrir menu principal</span>
-          <!-- Icon when menu is closed -->
           <svg
             class="block h-6 w-6"
+            xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="2"
             stroke="currentColor"
             aria-hidden="true"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M4 6h16M4 12h16M4 18h16"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
           </svg>
         </button>
       </div>
@@ -108,28 +84,16 @@ const localizedUrl = (path) => lang === 'pt-br' ? path : `/${lang}${path}`;
         {t('nav.play')}
       </a>
       <a
-        href={localizedUrl('/categories')}
-        class="block px-3 py-2 rounded-md text-base font-medium text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent transition-colors"
-      >
-        {t('nav.categories')}
-      </a>
-      <a
         href={localizedUrl('/ranking')}
         class="block px-3 py-2 rounded-md text-base font-medium text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent transition-colors"
       >
         {t('nav.ranking')}
       </a>
       <a
-        href={localizedUrl('/login')}
+        href={localizedUrl('/about')}
         class="block px-3 py-2 rounded-md text-base font-medium text-light-text-primary hover:text-light-text-accent dark:text-dark-text-primary dark:hover:text-dark-text-accent transition-colors"
       >
-        {t('nav.login')}
-      </a>
-      <a
-        href={localizedUrl('/register')}
-        class="block px-3 py-2 rounded-md text-base font-medium text-light-text-primary bg-light-primary hover:bg-light-primary/90 dark:bg-dark-primary dark:text-dark-text-primary dark:hover:bg-dark-primary/90 transition-colors"
-      >
-        {t('nav.register')}
+        {t('nav.about')}
       </a>
     </div>
   </div>
