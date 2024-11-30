@@ -1,6 +1,5 @@
 import { connectToDb } from '../../../utils/db';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import { AuthService } from '../../../lib/auth/authService';
 import { User } from '../../../models/user';
 
 export async function POST({ request }) {
@@ -10,8 +9,14 @@ export async function POST({ request }) {
     // Validação básica
     if (!email || !password) {
       return new Response(
-        JSON.stringify({ message: 'Email e senha são obrigatórios' }),
-        { status: 400 }
+        JSON.stringify({ 
+          error: 'Validation Error',
+          message: 'Email e senha são obrigatórios' 
+        }),
+        { 
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
@@ -20,43 +25,81 @@ export async function POST({ request }) {
 
     if (!user) {
       return new Response(
-        JSON.stringify({ message: 'Credenciais inválidas' }),
-        { status: 401 }
+        JSON.stringify({ 
+          error: 'Auth Error',
+          message: 'Credenciais inválidas' 
+        }),
+        { 
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await AuthService.comparePasswords(password, user.password);
 
     if (!isValidPassword) {
       return new Response(
-        JSON.stringify({ message: 'Credenciais inválidas' }),
-        { status: 401 }
+        JSON.stringify({ 
+          error: 'Auth Error',
+          message: 'Credenciais inválidas' 
+        }),
+        { 
+          status: 401,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
-    // Gerar token JWT
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+    // Gerar tokens
+    const { accessToken, refreshToken } = AuthService.generateTokens(user);
+
+    // Atualizar refresh token no banco
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { refreshToken } }
     );
+
+    // Configurar cookie seguro para o refresh token
+    const cookieOptions = {
+      httpOnly: true,
+      secure: import.meta.env.PROD,
+      sameSite: 'strict',
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 dias
+    };
 
     return new Response(
       JSON.stringify({
-        token,
+        accessToken,
         user: {
           id: user._id,
           email: user.email,
-          name: user.name
+          name: user.name,
+          points: user.points || 0,
+          permissions: user.permissions || {}
         }
       }),
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Set-Cookie': `refreshToken=${refreshToken}; ${Object.entries(cookieOptions)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('; ')}`
+        }
+      }
     );
   } catch (error) {
-    console.error('Erro no login:', error);
+    console.error('Login error:', error);
     return new Response(
-      JSON.stringify({ message: 'Erro interno do servidor' }),
-      { status: 500 }
+      JSON.stringify({ 
+        error: 'Server Error',
+        message: 'Erro ao processar login' 
+      }),
+      { 
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }
