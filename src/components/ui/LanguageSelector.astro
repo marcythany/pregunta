@@ -1,117 +1,92 @@
 ---
-import { languages } from '@/i18n/ui.js';
+import { languages } from '@/i18n/ui';
 
-const path = Astro.url.pathname;
-const currentLang = path.split('/')[1] || 'pt-br';
+const currentLang = Astro.currentLocale || 'pt-br';
+const currentPath = Astro.url.pathname.replace(/^\/[^\/]+/, '') || '/';
+
+// Importar os ícones SVG como strings
+const brazilFlag = '/icons/flag-br.svg';
+const usaFlag = '/icons/flag-en.svg';
+
+const flags = {
+  'pt-br': brazilFlag,
+  'en': usaFlag
+};
 ---
 
 <div class="relative inline-block text-left">
   <button
     type="button"
-    class="inline-flex items-center justify-center rounded-lg p-2.5 text-light-text-primary hover:bg-light-primary/10 dark:text-dark-text-primary dark:hover:bg-dark-primary/10 focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
+    class="inline-flex items-center gap-2 justify-center rounded-lg p-2.5 text-light-text-primary hover:bg-light-primary/10 dark:text-dark-text-primary dark:hover:bg-dark-primary/10 focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
     id="language-menu-button"
     aria-expanded="false"
     aria-haspopup="true"
   >
     <span class="sr-only">Open language menu</span>
-    <span class="fi fi-{currentLang} mr-2"></span>
+    <img 
+      src={flags[currentLang]} 
+      alt={`${languages[currentLang]} flag`}
+      width="24"
+      height="24"
+      class="w-6 h-6"
+    />
     <span class="hidden sm:block">{languages[currentLang]}</span>
   </button>
 
   <div
-    class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-light-surface dark:bg-dark-surface shadow-lg ring-1 ring-light-primary/5 dark:ring-dark-primary/5 focus:outline-none hidden"
+    class="absolute right-0 z-10 mt-2 w-32 origin-top-right rounded-md bg-white dark:bg-dark-surface shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
     role="menu"
     aria-orientation="vertical"
     aria-labelledby="language-menu-button"
     tabindex="-1"
-    id="language-menu"
   >
     <div class="py-1" role="none">
       {
-        Object.entries(languages).map(([locale, label]) => (
-          <a
-            href={`/${locale}${path}`}
-            class={`block px-4 py-2 text-sm ${
-              currentLang === locale
-                ? 'bg-light-primary/10 text-light-primary dark:bg-dark-primary/10 dark:text-dark-primary'
-                : 'text-light-text-primary hover:bg-light-primary/5 dark:text-dark-text-primary dark:hover:bg-dark-primary/5'
-            }`}
-            role="menuitem"
-            tabindex="-1"
-            data-lang={locale}
-          >
-            <span class={`fi fi-${locale} mr-2`}></span>
-            {label}
-          </a>
-        ))
+        Object.entries(languages).map(([locale, label]) => {
+          const href = locale === 'pt-br' ? currentPath : `/${locale}${currentPath}`;
+          return (
+            <a
+              href={href}
+              class={`flex items-center px-4 py-2 text-sm ${
+                currentLang === locale
+                  ? 'bg-light-primary/10 text-light-primary dark:bg-dark-primary/10 dark:text-dark-primary'
+                  : 'text-light-text-primary hover:bg-light-primary/5 dark:text-dark-text-primary dark:hover:bg-dark-primary/5'
+              }`}
+              role="menuitem"
+              tabindex="-1"
+              data-lang={locale}
+            >
+              <img 
+                src={flags[locale]} 
+                alt={`${languages[locale]} flag`}
+                width="24"
+                height="24"
+                class="w-6 h-6 mr-2"
+              />
+              {label}
+            </a>
+          );
+        })
       }
     </div>
   </div>
 </div>
 
 <script>
-  function init() {
-    const button = document.getElementById('language-menu-button');
-    const menu = document.getElementById('language-menu');
-    if (!button || !menu) return;
+  const button = document.getElementById('language-menu-button');
+  const menu = button?.nextElementSibling;
 
-    // Toggle menu
-    button.onclick = function() {
-      const expanded = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', (!expanded).toString());
-      menu.classList.toggle('hidden');
-    };
+  button?.addEventListener('click', () => {
+    const expanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', (!expanded).toString());
+    menu?.classList.toggle('hidden');
+  });
 
-    // Close menu when clicking outside
-    document.onclick = function(e) {
-      // Garantir que o elemento clicado é um HTMLElement
-      const clickedElement = e.target;
-      if (!(clickedElement instanceof HTMLElement)) return;
-      
-      // Verificar se o clique foi fora do menu e do botão
-      if (!button.contains(clickedElement) && !menu.contains(clickedElement)) {
-        button.setAttribute('aria-expanded', 'false');
-        menu.classList.add('hidden');
-      }
-    };
-
-    // Handle language selection
-    const links = menu.getElementsByTagName('a');
-    for (let i = 0; i < links.length; i++) {
-      const link = links[i];
-      link.onclick = function(e) {
-        e.preventDefault();
-        const newLang = link.getAttribute('data-lang');
-        const currentPath = window.location.pathname;
-        
-        // Remove o prefixo de idioma atual
-        let newPath = currentPath.replace(/^\/(pt-br|en)/, '');
-        
-        // Remove barras duplas e barra final
-        newPath = newPath.replace(/\/+/g, '/').replace(/\/$/, '');
-        
-        // Se o caminho estiver vazio, define como '/'
-        if (!newPath) {
-          newPath = '/';
-        }
-        
-        // Constrói o novo caminho
-        if (newLang === 'pt-br') {
-          newPath = newPath; // Mantém o caminho sem prefixo para português
-        } else {
-          newPath = newPath === '/' ? `/${newLang}` : `/${newLang}${newPath}`;
-        }
-        
-        // Redireciona
-        window.location.href = window.location.origin + newPath;
-      };
+  // Fechar menu ao clicar fora
+  document.addEventListener('click', (event) => {
+    if (!button?.contains(event.target as Node) && !menu?.contains(event.target as Node)) {
+      button?.setAttribute('aria-expanded', 'false');
+      menu?.classList.add('hidden');
     }
-  }
-
-  // Inicializa quando o DOM estiver pronto
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+  });
 </script>

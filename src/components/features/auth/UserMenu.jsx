@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStore } from '@/nanostores/react';
+import { useStore } from '@nanostores/react';
 import { userStore, logout } from '@/stores/authStore';
 import { Menu } from 'lucide-react';
 

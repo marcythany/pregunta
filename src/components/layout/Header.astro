@@ -2,7 +2,7 @@
 import { useTranslations } from '@/i18n/useTranslations';
 import LanguageSelector from '@ui/LanguageSelector.astro';
 import ThemeToggle from '@ui/ThemeToggle.astro';
-import HeaderAuth from './HeaderAuth';
+import {HeaderAuth} from './HeaderAuth.jsx';
 
 const { lang = 'pt-br' } = Astro.params;
 const t = useTranslations(lang);
@@ -46,7 +46,7 @@ const localizedUrl = (path) => lang === 'pt-br' ? path : `/${lang}${path}`;
 
       <!-- Botões da direita -->
       <div class="flex items-center space-x-4">
-        <HeaderAuth client:load />
+        <HeaderAuth client:load lang={lang} />
         <LanguageSelector />
         <ThemeToggle />
         
@@ -58,7 +58,7 @@ const localizedUrl = (path) => lang === 'pt-br' ? path : `/${lang}${path}`;
           aria-controls="mobile-menu"
           aria-expanded="false"
         >
-          <span class="sr-only">Abrir menu principal</span>
+          <span class="sr-only">{lang === 'pt-br' ? 'Abrir menu principal' : 'Open main menu'}</span>
           <svg
             class="block h-6 w-6"
             xmlns="http://www.w3.org/2000/svg"
