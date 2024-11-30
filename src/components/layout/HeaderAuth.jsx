@@ -1,22 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const dropdownStyles = `
   .dropdown-menu {
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
+    display: none;
   }
-
-  .dropdown-container:hover .dropdown-menu,
-  .dropdown-menu:hover {
-    opacity: 1;
-    visibility: visible;
+  .dropdown-container:hover .dropdown-menu {
+    display: block;
   }
 `;
 
 export default function HeaderAuth() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -41,6 +39,21 @@ export default function HeaderAuth() {
     };
 
     checkAuth();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        menuRef.current && 
+        !menuRef.current.contains(event.target) && 
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLogout = async () => {
@@ -78,8 +91,10 @@ export default function HeaderAuth() {
         </span>
         <div className="relative">
           <button
+            ref={buttonRef}
             type="button"
             className="flex items-center space-x-2 rounded-lg p-2 hover:bg-light-primary/10 dark:hover:bg-dark-primary/10 focus:outline-none focus:ring-2 focus:ring-light-primary dark:focus:ring-dark-primary"
+            onMouseEnter={() => setIsMenuOpen(true)}
           >
             <img
               src={user.avatarUrl || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'}
@@ -90,16 +105,22 @@ export default function HeaderAuth() {
               {user.username}
             </span>
           </button>
-          <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800">
-            <div className="py-1">
-              <button
-                onClick={handleLogout}
-                className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-              >
-                Sair
-              </button>
+          {isMenuOpen && (
+            <div
+              ref={menuRef}
+              className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800"
+              onMouseLeave={() => setIsMenuOpen(false)}
+            >
+              <div>
+                <button
+                  onClick={handleLogout}
+                  className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 rounded-md"
+                >
+                  Sair
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
