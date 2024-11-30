@@ -10,8 +10,8 @@ src/
 │
 ├── components/        # Componentes reutilizáveis
 │   ├── common/       # Componentes UI básicos usados em todo o app
-│   ├── layout/       # Componentes específicos de layout
-│   ├── features/     # Componentes específicos de funcionalidades
+│   ├── layout/       # Componentes específicos de layout (Header, Footer)
+│   ├── features/     # Componentes específicos de funcionalidades (Auth, Questions)
 │   └── ui/          # Componentes UI compartilhados com estilização específica
 │
 ├── constants/        # Constantes e configurações
@@ -57,15 +57,16 @@ src/
    - Mantenha rotas API em `pages/api` para operações do lado do servidor
 
 2. **Organização de Componentes**
-   - `common/`: Componentes básicos reutilizáveis
-   - `features/`: Componentes específicos de funcionalidades agrupados por domínio
-   - `layout/`: Componentes de layout usando Astro
-   - `ui/`: Componentes UI compartilhados com estilização específica
+   - `common/`: Componentes básicos reutilizáveis (Button, Input, Card)
+   - `features/`: Componentes específicos de funcionalidades (Auth, Questions) agrupados por domínio
+   - `layout/`: Componentes de layout (Header, Footer) usando Astro e React quando necessário
+   - `ui/`: Componentes UI compartilhados com estilização específica do Tailwind
 
 3. **Gerenciamento de Estado**
    - Use o estado do lado do servidor do Astro quando possível
-   - Implemente Context API do React para estado do lado do cliente
-   - Mantenha as stores simples e focadas em domínios específicos
+   - Use Nanostores (@nanostores/react) para gerenciamento de estado global
+   - Implemente Context API do React para estado local do cliente
+   - Mantenha as stores simples e focadas em domínios específicos (auth, questions)
 
 4. **Estilização com TailwindCSS**
    - Use classes Tailwind diretamente nos componentes
@@ -77,6 +78,7 @@ src/
    - Páginas Astro: `page.astro`
    - Componentes React: `ComponentName.jsx`
    - Rotas API: `route.js` ou `api.js`
+   - Stores: `storeName.js`
    - Utilitários: `camelCase.js`
    - Testes: `ComponentName.test.jsx`
 
@@ -98,12 +100,15 @@ src/
 
 2. **Componentes**
    - Prefira componentes `.astro` para conteúdo estático
-   - Use componentes React para elementos interativos
-   - Implemente tipos TypeScript adequados
+   - Use componentes React (.jsx) para elementos interativos
+   - Usar JavaScript para manipulação de dados e interatividade
    - Siga o princípio da responsabilidade única
    - Use validação adequada de props
+   - Implemente internacionalização (i18n) nos componentes
 
 3. **Manipulação de Dados**
+   - MongoDB para armazenamento persistente de dados
+   - Nanostores para gerenciamento de estado global
    - Implemente estratégias adequadas de busca de dados
    - Use busca de dados do lado do servidor do Astro quando possível
    - Trate erros graciosamente
