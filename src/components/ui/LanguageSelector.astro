@@ -1,0 +1,74 @@
+---
+import { languages } from '../../i18n/ui.js';
+import { getLanguageFromURL } from '../../i18n/useTranslations.js';
+
+const currentPath = Astro.url.pathname;
+const currentLang = getLanguageFromURL(currentPath);
+---
+
+<div class="relative inline-block text-left">
+  <select
+    class="block w-full px-4 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md bg-white dark:bg-gray-800 dark:border-gray-700"
+    id="language-selector"
+  >
+    {
+      Object.entries(languages).map(([lang, label]) => (
+        <option value={lang}>{label}</option>
+      ))
+    }
+  </select>
+</div>
+
+<script>
+  function updateLanguageSelector() {
+    const select = document.getElementById('language-selector');
+    if (!(select instanceof HTMLSelectElement)) return;
+
+    // Determina o idioma atual da URL
+    const currentPath = window.location.pathname;
+    const langMatch = currentPath.match(/^\/(pt-br|en)/);
+    const currentLang = langMatch ? langMatch[1] : 'pt-br';
+
+    // Define o valor do select
+    select.value = currentLang;
+
+    select.addEventListener('change', function() {
+      const newLang = select.value;
+      
+      // Remove o prefixo de idioma atual, se existir
+      let pathWithoutLang = currentPath;
+      const langPattern = /^\/(pt-br|en)(\/|$)/;
+      if (langPattern.test(currentPath)) {
+        pathWithoutLang = currentPath.replace(langPattern, '/');
+      }
+      
+      // Remove barras duplas e barra final
+      pathWithoutLang = pathWithoutLang.replace(/\/+/g, '/').replace(/\/$/, '');
+      
+      // Se o caminho estiver vazio após a limpeza, define como '/'
+      if (!pathWithoutLang) {
+        pathWithoutLang = '/';
+      }
+      
+      // Constrói o novo caminho
+      let newPath;
+      if (newLang === 'pt-br') {
+        // Para português, usa o caminho sem prefixo
+        newPath = pathWithoutLang;
+      } else {
+        // Para outros idiomas, adiciona o prefixo
+        newPath = pathWithoutLang === '/' ? `/${newLang}` : `/${newLang}${pathWithoutLang}`;
+      }
+      
+      // Força um reload completo da página
+      window.location.replace(window.location.origin + newPath);
+    });
+  }
+
+  // Executa a função quando o DOM estiver pronto
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateLanguageSelector);
+  } else {
+    updateLanguageSelector();
+  }
+</script>

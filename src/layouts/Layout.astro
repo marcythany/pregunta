@@ -1,7 +1,8 @@
 ---
-import Header from '../components/ui/Header.astro';
-import Footer from '../components/ui/Footer.astro';
-import { ToastContainer } from '../components/ui/Toast';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import { ToastContainer } from '../components/ui/modals/ToastManager.jsx';
+import '../styles/global.css';
 
 const lang = Astro.currentLocale || 'pt-br';
 
@@ -20,6 +21,7 @@ const {
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
 ---
 
 <html lang={lang} class="h-full">
@@ -53,8 +55,29 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="theme-color" content="#4F46E5" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/icon-192x192.png" />
+    
+    <!-- Theme Script -->
+    <script is:inline>
+      // Verifica e aplica o tema inicial
+      function setInitialTheme() {
+        if (
+          localStorage.theme === 'dark' ||
+          (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }
+
+      // Executa imediatamente para evitar flash
+      setInitialTheme();
+
+      // Reaplica quando a página é carregada via View Transitions
+      document.addEventListener('astro:after-swap', setInitialTheme);
+    </script>
   </head>
-  <body class="h-full font-body bg-background-light dark:bg-background-dark text-gray-800 dark:text-gray-100 antialiased">
+  <body class="h-full font-body bg-light-background dark:bg-dark-background text-light-text-primary dark:text-dark-text-primary antialiased">
     <div class="min-h-full flex flex-col">
       <Header />
       
@@ -80,47 +103,5 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <!-- Toast Container -->
       <ToastContainer client:load />
     </div>
-
-    <script>
-      // Theme handling
-      const theme = (() => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
-        }
-        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      })();
-    
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
-      } else {
-        document.documentElement.classList.add('dark');
-      }
-      
-      window.localStorage.setItem('theme', theme || 'light');
-    </script>
-
-    <style>
-      /* Suavizar transições de tema */
-      body {
-        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-      }
-      
-      /* Melhorar legibilidade */
-      body {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-      /* Animações */
-      @keyframes float {
-        0% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-        100% { transform: translateY(0px); }
-      }
-
-      .animate-float {
-        animation: float 6s ease-in-out infinite;
-      }
-    </style>
   </body>
 </html>

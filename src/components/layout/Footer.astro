@@ -26,30 +26,30 @@ const privacyUrl = getRelativeLocaleUrl(lang, 'privacy');
 const termsUrl = getRelativeLocaleUrl(lang, 'terms');
 ---
 
-<footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+<footer class="bg-light-surface dark:bg-dark-surface border-t border-light-text-secondary/10 dark:border-dark-text-secondary/10">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="md:flex md:items-center md:justify-between">
       <div class="text-center md:text-left">
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-light-text-secondary dark:text-dark-text-secondary">
           &copy; {currentYear} Pregunta. {t('footer.rights')}
         </p>
       </div>
       <div class="mt-4 flex justify-center md:mt-0 space-x-6">
         <a 
           href={aboutUrl} 
-          class="text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
+          class="text-sm text-light-text-secondary hover:text-light-primary dark:text-dark-text-secondary dark:hover:text-dark-primary transition-colors"
         >
           {t('footer.about')}
         </a>
         <a 
           href={privacyUrl} 
-          class="text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
+          class="text-sm text-light-text-secondary hover:text-light-primary dark:text-dark-text-secondary dark:hover:text-dark-primary transition-colors"
         >
           {t('footer.privacy')}
         </a>
         <a 
           href={termsUrl} 
-          class="text-sm text-gray-500 hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
+          class="text-sm text-light-text-secondary hover:text-light-primary dark:text-dark-text-secondary dark:hover:text-dark-primary transition-colors"
         >
           {t('footer.terms')}
         </a>

@@ -13,10 +13,13 @@ export default defineConfig({
   }),
   integrations: [tailwind(), react()],
   i18n: {
-    defaultLocale: 'pt-br',
-    locales: ['pt-br', 'en'],
+    defaultLocale: "pt-br",
+    locales: ["pt-br", "en"],
     routing: {
-      prefixDefaultLocale: true
+      prefixDefaultLocale: false
+    },
+    fallback: {
+      en: "pt-br"
     }
   }
 });
