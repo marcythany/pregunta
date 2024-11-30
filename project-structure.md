@@ -13,6 +13,7 @@ src/
 │   │   ├── auth/     # Componentes de autenticação
 │   │   ├── categories/ # Componentes de categorias
 │   │   ├── game/     # Componentes do jogo
+│   │   ├── preferences/ # Componentes de preferências (idioma, tema)
 │   │   ├── questions/ # Componentes de perguntas
 │   │   ├── ranking/  # Componentes de ranking
 │   │   └── welcome/  # Componentes de boas-vindas
