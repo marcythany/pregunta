@@ -38,10 +38,13 @@ src/
 │
 ├── lib/            # Serviços e configurações
 │   ├── api/        # Serviço de API
-│   ├── auth/       # Serviço de autenticação
+│   ├── auth/       # Serviços de autenticação e permissões
+│   │   ├── authService.js    # Autenticação de usuários
+│   │   └── permissionService.js # Verificação de permissões
 │   ├── cache/      # Serviço de cache
-│   ├── db/         # Serviço de banco de dados
-│   └── services/   # Outros serviços
+│   │   └── cacheService.js   # Cache do lado do cliente
+│   └── db/         # Serviço de banco de dados
+│       └── dbService.js      # Conexão com MongoDB
 │
 ├── middleware/     # Middleware SSR e manipuladores de rotas API
 │   ├── auth.js    # Middleware de autenticação
