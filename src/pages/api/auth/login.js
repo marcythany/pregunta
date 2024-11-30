@@ -1,85 +1,79 @@
-import { connectToDb } from '../../../utils/db';
-import { AuthService } from '../../../lib/auth/authService';
-import { User } from '../../../models/user';
+import DbService from '@/lib/db/dbService';
+import { User } from '@/models/user';
+import { AuthService } from '@/lib/auth/authService';
 
-export async function POST({ request }) {
+export async function post({ request }) {
   try {
     const { email, password } = await request.json();
 
     // Validação básica
     if (!email || !password) {
       return new Response(
-        JSON.stringify({ 
-          error: 'Validation Error',
-          message: 'Email e senha são obrigatórios' 
-        }),
+        JSON.stringify({ message: 'Email e senha são obrigatórios' }),
         { 
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
     }
 
-    await connectToDb();
-    const user = await User.findOne({ email });
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
 
+    // Buscar usuário
+    const user = await User.findOne({ email });
     if (!user) {
       return new Response(
-        JSON.stringify({ 
-          error: 'Auth Error',
-          message: 'Credenciais inválidas' 
-        }),
+        JSON.stringify({ message: 'Email ou senha inválidos' }),
         { 
           status: 401,
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
     }
 
+    // Verificar senha
     const isValidPassword = await AuthService.comparePasswords(password, user.password);
-
     if (!isValidPassword) {
       return new Response(
-        JSON.stringify({ 
-          error: 'Auth Error',
-          message: 'Credenciais inválidas' 
-        }),
+        JSON.stringify({ message: 'Email ou senha inválidos' }),
         { 
           status: 401,
-          headers: { 'Content-Type': 'application/json' }
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }
       );
     }
 
     // Gerar tokens
-    const { accessToken, refreshToken } = AuthService.generateTokens(user);
+    const { accessToken, refreshToken } = await AuthService.generateTokens(user);
 
-    // Atualizar refresh token no banco
-    await User.updateOne(
-      { _id: user._id },
-      { $set: { refreshToken } }
-    );
-
-    // Configurar cookie seguro para o refresh token
+    // Configurar cookie do refresh token
     const cookieOptions = {
       httpOnly: true,
       secure: import.meta.env.PROD,
-      sameSite: 'strict',
+      sameSite: 'lax',
+      path: '/',
       maxAge: 30 * 24 * 60 * 60 * 1000 // 30 dias
     };
 
     return new Response(
       JSON.stringify({
-        accessToken,
+        message: 'Login realizado com sucesso',
         user: {
           id: user._id,
           email: user.email,
-          name: user.name,
-          points: user.points || 0,
-          permissions: user.permissions || {}
-        }
+          username: user.username,
+          points: user.points
+        },
+        accessToken
       }),
-      {
+      { 
         status: 200,
         headers: {
           'Content-Type': 'application/json',
@@ -90,15 +84,14 @@ export async function POST({ request }) {
       }
     );
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Erro no login:', error);
     return new Response(
-      JSON.stringify({ 
-        error: 'Server Error',
-        message: 'Erro ao processar login' 
-      }),
+      JSON.stringify({ message: 'Erro interno do servidor' }),
       { 
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
     );
   }

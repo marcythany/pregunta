@@ -1,14 +1,14 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-const Modal = ({ 
+export function Modal({ 
   isOpen, 
   onClose, 
   title, 
   children,
   size = 'md',
   showClose = true
-}) => {
+}) {
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
@@ -80,5 +80,3 @@ const Modal = ({
     document.body
   );
 };
-
-export default Modal;

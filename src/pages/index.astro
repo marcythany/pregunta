@@ -1,9 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { useTranslations } from '../i18n/useTranslations.js';
-import Button from '../components/common/Button.jsx';
-import Card from '../components/common/Card.jsx';
-import Avatar from '../components/common/Avatar.jsx';
+import Layout from '@layouts/Layout.astro';
+import { useTranslations } from '@/i18n/useTranslations.js';
+import { Button } from '@ui/base/Button';
+import { Card } from '@ui/base/Card.jsx';
+import { Avatar } from '@ui/base/Avatar.jsx';
 
 const lang = 'pt-br';
 const t = useTranslations(lang);
@@ -14,53 +14,53 @@ const localizedUrl = (path) => path.startsWith('/') ? path : `/${path}`;
 
 <Layout title={t('welcome.title')}>
   <!-- Hero Section -->
-  <section class="relative h-[500px] w-full bg-gradient-to-br from-light-primary/20 to-light-secondary/20 dark:from-dark-primary/20 dark:to-dark-secondary/20 flex items-center justify-center overflow-hidden">
-    <!-- Background Image with Overlay -->
+  <section class="relative h-[500px] w-full bg-gradient-to-br from-light-primary/10 to-light-secondary/10 dark:from-dark-primary/10 dark:to-dark-secondary/10 flex items-center justify-center overflow-hidden">
     <div class="absolute inset-0">
       <img 
         src="https://picsum.photos/seed/pregunta-hero/1920/1080" 
-        alt="Hero Background" 
+        alt="Background" 
         class="w-full h-full object-cover opacity-30"
       />
     </div>
     <div class="relative text-center space-y-6 max-w-4xl px-4">
-      <h1 class="text-5xl font-bold text-light-text-primary dark:text-dark-text-primary">{t('welcome.title')}</h1>
+      <h1 class="text-5xl font-bold text-light-text-primary dark:text-dark-text-primary font-display">{t('welcome.title')}</h1>
       <p class="text-xl text-light-text-secondary dark:text-dark-text-secondary">{t('welcome.description')}</p>
-      <Button
-        variant="primary"
-        className="inline-block"
-        onClick={() => {}}
-        client:load
-      >
-        {t('nav.play')}
-      </Button>
+      <div>
+        <Button
+          href={localizedUrl('/register')}
+          variant="primary"
+          className="inline-block"
+        >
+          {t('nav.signup')}
+        </Button>
+      </div>
     </div>
   </section>
 
   <!-- Categories Section -->
   <section class="py-16 px-4 max-w-7xl mx-auto">
-    <h2 class="text-3xl font-bold mb-8 text-light-text-primary dark:text-dark-text-primary">{t('categories.title')}</h2>
+    <h2 class="text-3xl font-bold mb-8 text-light-text-primary dark:text-dark-text-primary font-display">{t('categories.title')}</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       {[
-        { name: 'Praia', seed: 'beach', path: '/categories/beach' },
-        { name: 'Aventura na Montanha', seed: 'mountain', path: '/categories/mountain' },
-        { name: 'Luzes da Cidade', seed: 'city', path: '/categories/city' },
-        { name: 'Refúgio na Floresta', seed: 'forest', path: '/categories/forest' },
-        { name: 'Festival de Música', seed: 'music', path: '/categories/music' },
-        { name: 'Tour Histórico', seed: 'history', path: '/categories/history' },
-        { name: 'Mercado Local', seed: 'market', path: '/categories/market' },
-        { name: 'Retiro ao Lago', seed: 'lake', path: '/categories/lake' }
+        { name: 'Praia', seed: 'beach', path: '/categories/beach', image: 'https://picsum.photos/seed/beach/400/300' },
+        { name: 'Aventura na Montanha', seed: 'mountain', path: '/categories/mountain', image: 'https://picsum.photos/seed/mountain/400/300' },
+        { name: 'Luzes da Cidade', seed: 'city', path: '/categories/city', image: 'https://picsum.photos/seed/city/400/300' },
+        { name: 'Refúgio na Floresta', seed: 'forest', path: '/categories/forest', image: 'https://picsum.photos/seed/forest/400/300' },
+        { name: 'Festival de Música', seed: 'music', path: '/categories/music', image: 'https://picsum.photos/seed/music/400/300' },
+        { name: 'Tour Histórico', seed: 'history', path: '/categories/history', image: 'https://picsum.photos/seed/history/400/300' },
+        { name: 'Mercado Local', seed: 'market', path: '/categories/market', image: 'https://picsum.photos/seed/market/400/300' },
+        { name: 'Retiro ao Lago', seed: 'lake', path: '/categories/lake', image: 'https://picsum.photos/seed/lake/400/300' }
       ].map((category) => (
-        <Card className="group relative p-0 overflow-hidden hover:scale-[1.02] transition-all duration-300">
+        <Card className="group relative p-0 overflow-hidden hover:scale-[1.02] transition-all duration-300 bg-light-surface dark:bg-dark-surface">
           <a href={localizedUrl(category.path)} class="block">
             <img
-              src={`https://picsum.photos/seed/${category.seed}/400/300`}
+              src={category.image}
               alt={category.name}
               class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark-background/70 to-transparent">
               <div class="absolute bottom-0 p-4">
-                <h3 class="text-xl font-semibold text-white">{category.name}</h3>
+                <h3 class="text-xl font-semibold text-dark-text-primary">{category.name}</h3>
               </div>
             </div>
           </a>
@@ -71,7 +71,7 @@ const localizedUrl = (path) => path.startsWith('/') ? path : `/${path}`;
 
   <!-- Top Players Section -->
   <section class="py-16 px-4 max-w-7xl mx-auto">
-    <h2 class="text-3xl font-bold mb-8 text-light-text-primary dark:text-dark-text-primary">{t('ranking.title')}</h2>
+    <h2 class="text-3xl font-bold mb-8 text-light-text-primary dark:text-dark-text-primary font-display">{t('ranking.title')}</h2>
     <div class="grid md:grid-cols-2 gap-8">
       {[
         { name: 'Alex J.', username: '@starplayer', score: '9500', seed: 'alex' },

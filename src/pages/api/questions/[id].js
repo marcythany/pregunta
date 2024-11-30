@@ -1,5 +1,5 @@
-import { authMiddleware } from '../../../utils/auth';
-import { connectToDb } from '../../../utils/db';
+import { authMiddleware } from '@/middleware/auth';
+import DbService from '@/lib/db/dbService';
 import { ObjectId } from 'mongodb';
 
 // GET: Obter detalhes de uma pergunta específica
@@ -16,9 +16,9 @@ export async function GET({ request, params }) {
       );
     }
 
-    await connectToDb();
-    const db = await connectToDb();
-    const questionsCollection = db.collection('questions');
+    const dbService = new DbService();
+    await dbService.connect();
+    const questionsCollection = dbService.getCollection('questions');
 
     // Incrementar visualizações
     await questionsCollection.updateOne(
@@ -77,9 +77,9 @@ export async function PUT({ request, params }) {
       );
     }
 
-    await connectToDb();
-    const db = await connectToDb();
-    const questionsCollection = db.collection('questions');
+    const dbService = new DbService();
+    await dbService.connect();
+    const questionsCollection = dbService.getCollection('questions');
 
     // Verifica se o usuário é o autor da pergunta
     const question = await questionsCollection.findOne({ _id: new ObjectId(id) });
@@ -138,9 +138,9 @@ export async function DELETE({ request, params }) {
       );
     }
 
-    await connectToDb();
-    const db = await connectToDb();
-    const questionsCollection = db.collection('questions');
+    const dbService = new DbService();
+    await dbService.connect();
+    const questionsCollection = dbService.getCollection('questions');
 
     // Verifica se o usuário é o autor da pergunta
     const question = await questionsCollection.findOne({ _id: new ObjectId(id) });

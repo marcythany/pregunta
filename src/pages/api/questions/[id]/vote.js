@@ -1,5 +1,5 @@
-import { authMiddleware } from '../../../../utils/auth';
-import { connectToDb } from '../../../../utils/db';
+import { authMiddleware } from '@middleware/auth';
+import DbService from '@lib/db/dbService';
 import { ObjectId } from 'mongodb';
 
 // POST: Votar em uma pergunta (upvote/downvote)
@@ -24,10 +24,10 @@ export async function POST({ request, params }) {
       );
     }
 
-    await connectToDb();
-    const db = await connectToDb();
-    const questionsCollection = db.collection('questions');
-    const votesCollection = db.collection('votes');
+    const dbService = new DbService();
+    await dbService.connect();
+    const questionsCollection = dbService.collection('questions');
+    const votesCollection = dbService.collection('votes');
 
     // Verifica se o usuário já votou nesta pergunta
     const existingVote = await votesCollection.findOne({

@@ -1,142 +1,229 @@
 import React, { useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { userStore, setUser, setToken, setPoints, setPermissions } from '../../stores/authStore';
+import { userStore, setUser, setToken, setPoints, setPermissions } from '@stores/authStore';
+import { Github } from 'lucide-react';
+import { Modal } from '@ui/modals/Modal';
+import { Button } from '@ui/base/Button';
+import { Input } from '@ui/base/Input';
+import { LoadingSpinner } from '@ui/base/LoadingSpinner';
+import ApiService from '@lib/api/apiService';
 
-export function AuthModal({ isOpen, onClose }) {
+export function AuthModal({ isOpen, onClose, lang = 'pt-br' }) {
   const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const user = useStore(userStore);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-  const handleSubmit = async (e) => {
+  const validateForm = () => {
+    if (!formData.email || !formData.password) {
+      setError(lang === 'pt-br' ? 'Por favor, preencha todos os campos obrigatórios.' : 'Please fill in all required fields.');
+      return false;
+    }
+
+    if (!isLogin) {
+      if (!formData.username) {
+        setError(lang === 'pt-br' ? 'Nome de usuário é obrigatório.' : 'Username is required.');
+        return false;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setError(lang === 'pt-br' ? 'As senhas não coincidem.' : 'Passwords do not match.');
+        return false;
+      }
+      if (formData.password.length < 8) {
+        setError(lang === 'pt-br' ? 'A senha deve ter pelo menos 8 caracteres.' : 'Password must be at least 8 characters long.');
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
+    setError('');
+
+    if (!validateForm()) return;
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const body = isLogin ? { email, password } : { name, email, password };
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
+      const data = await ApiService.post('auth/login', {
+        email: formData.email,
+        password: formData.password
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Algo deu errado');
-      }
-
-      setToken(data.token);
-      setUser(data.user);
-
-      const pointsResponse = await fetch('/api/user/points', {
-        headers: {
-          'Authorization': `Bearer ${data.token}`
-        }
-      });
-      const pointsData = await pointsResponse.json();
       
-      if (pointsResponse.ok) {
-        setPoints(pointsData.points);
-        setPermissions(pointsData.permissions);
-      }
-
+      setUser(data.user);
+      setToken(data.accessToken);
+      setPoints(data.user.points || 0);
+      setPermissions(data.user.permissions || []);
       onClose();
-    } catch (err) {
-      setError(err.message);
+    } catch (error) {
+      setError(error.message || 'Erro ao fazer login');
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isOpen) return null;
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    if (!validateForm()) return;
+
+    try {
+      const data = await ApiService.post('auth/register', {
+        name: formData.username,
+        email: formData.email,
+        password: formData.password
+      });
+
+      setUser(data.user);
+      setToken(data.accessToken);
+      setPoints(data.user.points || 0);
+      setPermissions(data.user.permissions || []);
+      onClose();
+    } catch (error) {
+      setError(error.message || 'Erro ao criar conta');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSocialLogin = async (provider) => {
+    // Implementar login social
+    console.log(`Login com ${provider}`);
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-xl">
-        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-          {isLogin ? 'Login' : 'Criar Conta'}
-        </h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal 
+      isOpen={isOpen} 
+      onClose={onClose}
+      title={isLogin ? (lang === 'pt-br' ? 'Entrar' : 'Login') : (lang === 'pt-br' ? 'Criar Conta' : 'Create Account')}
+      size="sm"
+    >
+      <div className="space-y-4">
+        {error && (
+          <div className="p-3 rounded-lg bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-4">
           {!isLogin && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Nome
-              </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-                required
-              />
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+            <Input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              placeholder={lang === 'pt-br' ? 'Nome de usuário' : 'Username'}
+              disabled={loading}
               required
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Senha
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400"
-              required
-            />
-          </div>
-
-          {error && (
-            <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
           )}
 
-          <button
-            type="submit"
+          <Input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder={lang === 'pt-br' ? 'Email' : 'Email'}
             disabled={loading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition-colors"
+            required
+          />
+
+          <Input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder={lang === 'pt-br' ? 'Senha' : 'Password'}
+            disabled={loading}
+            required
+          />
+
+          {!isLogin && (
+            <Input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder={lang === 'pt-br' ? 'Confirmar senha' : 'Confirm password'}
+              disabled={loading}
+              required
+            />
+          )}
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={loading}
           >
-            {loading ? 'Carregando...' : (isLogin ? 'Entrar' : 'Criar Conta')}
-          </button>
+            {loading ? (
+              <LoadingSpinner size="sm" />
+            ) : isLogin ? (
+              lang === 'pt-br' ? 'Entrar' : 'Login'
+            ) : (
+              lang === 'pt-br' ? 'Criar Conta' : 'Create Account'
+            )}
+          </Button>
         </form>
 
-        <button
-          onClick={() => setIsLogin(!isLogin)}
-          className="mt-4 text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300"
-        >
-          {isLogin ? 'Não tem uma conta? Crie agora' : 'Já tem uma conta? Faça login'}
-        </button>
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-light-text-secondary/10 dark:border-dark-text-secondary/10"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-light-surface dark:bg-dark-surface text-light-text-secondary dark:text-dark-text-secondary">
+              {lang === 'pt-br' ? 'ou continue com' : 'or continue with'}
+            </span>
+          </div>
+        </div>
 
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-400 dark:text-gray-500 hover:text-gray-500 dark:hover:text-gray-400 transition-colors"
-        >
-          <span className="sr-only">Fechar</span>
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleSocialLogin('google')}
+            disabled={loading}
+          >
+            <img src="/icons/google.svg" alt="Google" className="w-5 h-5 mr-2" />
+            Google
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => handleSocialLogin('github')}
+            disabled={loading}
+          >
+            <Github className="w-5 h-5 mr-2" />
+            GitHub
+          </Button>
+        </div>
+
+        <div className="text-center text-sm">
+          <button
+            type="button"
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-light-primary dark:text-dark-primary hover:underline"
+            disabled={loading}
+          >
+            {isLogin
+              ? (lang === 'pt-br' ? 'Não tem uma conta? Criar conta' : "Don't have an account? Sign up")
+              : (lang === 'pt-br' ? 'Já tem uma conta? Entrar' : 'Already have an account? Login')}
+          </button>
+        </div>
       </div>
-    </div>
+    </Modal>
   );
 }

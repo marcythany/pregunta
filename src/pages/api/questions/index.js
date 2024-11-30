@@ -1,6 +1,6 @@
-import { authMiddleware } from '../../../utils/auth';
-import { connectToDb } from '../../../utils/db';
-import { permissionMiddleware, updateUserPoints } from '../../../utils/permissions';
+import { authMiddleware } from '@middleware/auth';
+import DbService from '@lib/db/dbService';
+import { permissionMiddleware, updateUserPoints } from '@middleware/permissions';
 
 // GET: Listar perguntas (com paginação e filtros)
 export async function GET({ request }) {
@@ -15,9 +15,9 @@ export async function GET({ request }) {
     const language = url.searchParams.get('language') || 'pt-br';
     const search = url.searchParams.get('search');
 
-    await connectToDb();
-    const db = await connectToDb();
-    const questionsCollection = db.collection('questions');
+    const dbService = new DbService();
+    await dbService.connect();
+    const questionsCollection = dbService.collection('questions');
 
     // Construir query baseada nos filtros
     const query = {
@@ -90,10 +90,10 @@ export async function POST({ request }) {
       );
     }
 
-    await connectToDb();
-    const db = await connectToDb();
-    const questionsCollection = db.collection('questions');
-    const usersCollection = db.collection('users');
+    const dbService = new DbService();
+    await dbService.connect();
+    const questionsCollection = dbService.collection('questions');
+    const usersCollection = dbService.collection('users');
 
     // Verifica se é a primeira pergunta do usuário
     const userQuestions = await questionsCollection.countDocuments({ userId: auth.userId });

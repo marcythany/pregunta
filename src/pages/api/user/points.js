@@ -1,5 +1,5 @@
 import { authMiddleware } from '../../../utils/auth';
-import { connectToDb } from '../../../utils/db';
+import DbService from '@/lib/db/dbService';
 import { PERMISSION_THRESHOLDS } from '../../../utils/permissions';
 
 // GET: Obter informações sobre pontos e permissões do usuário
@@ -8,8 +8,8 @@ export async function GET({ request }) {
     const auth = await authMiddleware(request);
     if (auth instanceof Response) return auth;
 
-    await connectToDb();
-    const db = await connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
     const usersCollection = db.collection('users');
 
     // Busca informações do usuário
@@ -63,8 +63,8 @@ export async function getPointsHistory({ request }) {
     const page = parseInt(url.searchParams.get('page')) || 1;
     const limit = parseInt(url.searchParams.get('limit')) || 10;
 
-    await connectToDb();
-    const db = await connectToDb();
+    // Conectar ao banco de dados
+    const db = await DbService.getInstance();
     const pointsHistoryCollection = db.collection('pointsHistory');
 
     // Busca o histórico de pontos com paginação

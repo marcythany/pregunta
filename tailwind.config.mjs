@@ -5,58 +5,62 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Cores principais do tema claro
+        // Tema claro
         light: {
-          background: '#F5F7FF', // Azul bem claro e suave
-          surface: '#FFFFFF',
-          primary: '#6366F1', // Índigo acessível
-          secondary: '#8B5CF6', // Roxo acessível
-          accent: '#F59E0B', // Âmbar acessível
+          background: '#f1eefb', // dull-lavender-50
+          surface: '#e5e0f8',
+          primary: '#8152cf', // dull-lavender-600
+          secondary: '#9a76dc', // dull-lavender-500
+          accent: '#6b3ebb', // dull-lavender-700
           text: {
-            primary: '#1F2937', // Cinza escuro para texto principal
-            secondary: '#4B5563', // Cinza médio para texto secundário
-            accent: '#6366F1', // Índigo para links e destaques
+            primary: '#2a1757', // dull-lavender-950
+            secondary: '#5a319d', // dull-lavender-800
+            accent: '#8152cf', // dull-lavender-600
           }
         },
-        // Cores principais do tema escuro
+        // Tema escuro
         dark: {
-          background: '#161B22', // Azul escuro suave
-          surface: '#1F2937',
-          primary: '#818CF8', // Índigo claro acessível
-          'primary-bg': '#4338CA', // Índigo mais escuro para background de botões
-          'primary-hover': '#3730A3', // Ainda mais escuro para hover
-          secondary: '#A78BFA', // Roxo claro acessível
-          accent: '#FCD34D', // Âmbar claro acessível
+          background: '#2a1757', // dull-lavender-950
+          surface: '#452679', // dull-lavender-900
+          primary: '#9a76dc', // dull-lavender-500
+          secondary: '#b498e8', // dull-lavender-400
+          accent: '#d2c7f2', // dull-lavender-300
           text: {
-            primary: '#F3F4F6', // Cinza bem claro para texto principal
-            secondary: '#D1D5DB', // Cinza claro para texto secundário
-            accent: '#818CF8', // Índigo claro para links e destaques
+            primary: '#f8f7fe', // dull-lavender-50
+            secondary: '#e5e0f8', // dull-lavender-200
+            accent: '#b498e8', // dull-lavender-400
           }
         },
-        // Cores de estado
+        // Cores de estado com base na paleta dull-lavender
         success: {
-          light: '#059669', // Verde esmeralda acessível
-          dark: '#34D399', // Verde esmeralda claro acessível
+          light: '#6b3ebb', // dull-lavender-700
+          dark: '#b498e8', // dull-lavender-400
         },
         error: {
-          light: '#DC2626', // Vermelho acessível
-          dark: '#F87171', // Vermelho claro acessível
+          light: '#8152cf', // dull-lavender-600
+          dark: '#d2c7f2', // dull-lavender-300
         },
         warning: {
-          light: '#D97706', // Âmbar acessível
-          dark: '#FBBF24', // Âmbar claro acessível
+          light: '#5a319d', // dull-lavender-800
+          dark: '#e5e0f8', // dull-lavender-200
         },
         info: {
-          light: '#2563EB', // Azul acessível
-          dark: '#60A5FA', // Azul claro acessível
+          light: '#9a76dc', // dull-lavender-500
+          dark: '#f1eefb', // dull-lavender-100
         },
-        // Cores de destaque para elementos interativos
-        accent: {
-          yellow: '#FFD93D',
-          orange: '#FF8400',
-          purple: '#9B6B9E',
-          green: '#4CAF50',
-          pink: '#FF69B4'
+        // Paleta completa dull-lavender para uso flexível
+        'dull-lavender': {
+          '50': '#f8f7fe',
+          '100': '#f1eefb',
+          '200': '#e5e0f8',
+          '300': '#d2c7f2',
+          '400': '#b498e8',
+          '500': '#9a76dc',
+          '600': '#8152cf',
+          '700': '#6b3ebb',
+          '800': '#5a319d',
+          '900': '#452679',
+          '950': '#2a1757',
         },
       },
       fontFamily: {
